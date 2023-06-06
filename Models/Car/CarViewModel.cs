@@ -14,6 +14,6 @@ namespace CarRentals.Models.Car
         public decimal Price { get; set; }
         public List<ViewCarGallery> CarGalleries { get; set; }
         public List<CommentViewModel> Comments { get; set; }
-        public List<CarReportViewModel> CarReports
+        public List<CarReportViewModel> CarReports { get; set; }
     }
 }
