@@ -17,7 +17,7 @@ namespace CarRentals.Models.Car
         [Required]
         public IFormFileCollection GalleryFiles { get; set; }
 
-        public List<ViewCarGallery> Gallery { get; set; }
+        public List<CarGalleryModel> Gallery { get; set; }
 
     }
 }

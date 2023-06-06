@@ -1,6 +1,5 @@
-﻿using CarRentals.Models.CarGallery;
+﻿using CarRentals.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
 namespace CarRentals.Models.Car
 {
@@ -18,7 +17,7 @@ namespace CarRentals.Models.Car
         [Required]
         public IFormFileCollection GalleryFiles { get; set; }
 
-        public List<CreateCarGallery> Gallery { get; set; }
+        public List<CarGalleryModel> Gallery { get; set; }
 
     }
 }

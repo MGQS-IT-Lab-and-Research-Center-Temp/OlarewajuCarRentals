@@ -1,8 +1,7 @@
-﻿namespace CarRentals.Models.CarGallery
+﻿namespace CarRentals.Models
 {
-    public class ViewCarGallery
+    public class CarGalleryModel
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string URL { get; set; }
