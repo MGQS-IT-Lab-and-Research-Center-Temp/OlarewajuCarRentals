@@ -1,3 +1,5 @@
+using CarRentals.Context;
+
 namespace CarRentals
 {
     public class Program
@@ -18,7 +20,7 @@ namespace CarRentals
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.seed
+            app.SeedToDatabase();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
