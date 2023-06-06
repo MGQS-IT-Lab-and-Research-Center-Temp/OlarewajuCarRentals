@@ -6,6 +6,7 @@ namespace CarRentals.Models.Car
 {
     public class UpdateCarViewModel
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string PlateNumber { get; set; }
         [Display(Name = "Choose the cover photo of your book")]

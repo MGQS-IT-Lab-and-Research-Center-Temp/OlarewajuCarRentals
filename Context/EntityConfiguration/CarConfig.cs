@@ -21,6 +21,10 @@ namespace CarRentals.Context.EntityConfiguration
                 .HasColumnType("text")
                 .HasMaxLength(11);
 
+            builder.Property(c => c.Price)
+                .IsRequired()
+                .HasColumnType("decimal");
+
 
             builder.Property(c => c.Description)
               .HasColumnType("text")
@@ -29,7 +33,7 @@ namespace CarRentals.Context.EntityConfiguration
             builder.HasIndex(c => c.PlateNumber)
                   .IsUnique();
 
-            builder.Property(c => c.ImageUrl)
+            builder.Property(c => c.CoverImageUrl)
                 .HasColumnType("varchar(255)");
 
             builder.HasMany(bk => bk.Bookings)

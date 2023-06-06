@@ -4,6 +4,6 @@
     {
         public string CarId { get; set; }
         public string UserId { get; set; }
-        public decimal Amount
+        public string PaymentiId { get; set; }
     }
 }

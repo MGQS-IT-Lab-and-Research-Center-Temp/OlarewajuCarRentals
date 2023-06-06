@@ -22,15 +22,9 @@ namespace CarRentals.Context.EntityConfiguration
 
 
             builder.HasOne(bk => bk.Payment)
-                  .WithMany(c => c.Bookings)
-                  .HasForeignKey(bk => bk.PaymentId);
+                  .WithOne(c => c.Bookings);
+                 
 
-            builder.Property(bk => bk.Amount)
-                   .IsRequired()
-                   .HasColumnType("Decimal");
-
-     
-   
 
 
 

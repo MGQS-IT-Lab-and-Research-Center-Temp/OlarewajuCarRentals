@@ -18,6 +18,8 @@ namespace CarRentals.Models.Car
         public IFormFileCollection GalleryFiles { get; set; }
 
         public List<CarGalleryModel> Gallery { get; set; }
+        [Required (ErrorMessage = "Enter Price for renting!!!")]
+        public decimal Price { get; set; }
 
     }
 }

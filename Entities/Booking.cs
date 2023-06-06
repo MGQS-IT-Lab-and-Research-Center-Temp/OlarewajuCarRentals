@@ -7,8 +7,6 @@
         public string CarId { get; set; }
         public Car Car { get; set; }
         public bool IsPaid { get; set; }
-        public decimal Amount { get; set; }
-       
         public string PaymentId { get; set; }
         public Payment Payment { get; set; }
     }
