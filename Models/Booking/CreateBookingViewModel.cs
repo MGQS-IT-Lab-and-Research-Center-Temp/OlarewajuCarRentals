@@ -4,6 +4,6 @@
     {
         public string CarId { get; set; }
         public string UserId { get; set; }
-        public string PaymentiId { get; set; }
+        public string PaymentId { get; set; }
     }
 }
