@@ -27,12 +27,27 @@ namespace CarRentals.Repository.Implementation
 
         public List<Car> GetCars()
         {
-            throw new NotImplementedException();
+             var cars = _context.Cars
+                .Include(uq => uq.CarGalleries)
+                .Include(c => c.Comments)
+                .ThenInclude(u => u.User)
+                .Include(qr => qr.CarReports)
+                .ToList();
+
+            return cars;
         }
 
         public List<Car> GetCars(Expression<Func<Car, bool>> expression)
         {
-            throw new NotImplementedException();
+            var cars = _context.Cars
+                          .Where(expression)
+                          .Include(u => u.CarGalleries)
+                          .Include(c => c.Comments)
+                          .ThenInclude(u => u.User)
+                          .Include(qr => qr.CarReports)
+                          .ToList();
+
+            return cars;
         }
     }
 }
