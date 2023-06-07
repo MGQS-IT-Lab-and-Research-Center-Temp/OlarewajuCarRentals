@@ -47,7 +47,7 @@ namespace CarRentals.Repository.Implementation
                           .Include(qr => qr.CarReports)
                           .ToList();
 
-            return cars;
+            return cars ;
         }
     }
 }

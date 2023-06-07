@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Payment\" />
+    <Folder Include="Models\PaymentCategory\" />
   </ItemGroup>
 
 </Project>

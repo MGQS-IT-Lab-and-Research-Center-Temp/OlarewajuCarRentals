@@ -12,5 +12,7 @@ namespace CarRentals.Entities
         public User User { get; set; }
        public string BookingId { get; set; }
         public Booking Bookings { get; set; }
+        public int PaymentCategoryId { get; set; }
+        public PaymentCategory PaymentCategory { get; set; }
     }
 }

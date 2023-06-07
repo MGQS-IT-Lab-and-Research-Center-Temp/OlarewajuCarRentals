@@ -8,6 +8,7 @@ namespace CarRentals.Repository.Implementation
     {
         public CommentRepository(CarRentalsContext context) : base(context)
         {
+
         }
     }
 }
