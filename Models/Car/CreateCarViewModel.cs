@@ -5,7 +5,9 @@ namespace CarRentals.Models.Car
 {
     public class CreateCarViewModel
     {
-        public List<string> CategoryIds { get; set; } 
+        [Required(ErrorMessage = "One or more Categories need to be selected")]
+
+        public List<string> CategoryIds { get; set; }
         public string Name { get; set; }
         public string PlateNumber { get; set; }
         [Display(Name = "Choose the cover photo of your book")]
@@ -18,7 +20,7 @@ namespace CarRentals.Models.Car
         public IFormFileCollection GalleryFiles { get; set; }
 
         public List<CarGalleryModel> Gallery { get; set; }
-        [Required (ErrorMessage = "Enter Price for renting!!!")]
+        [Required(ErrorMessage = "Enter Price for renting!!!")]
         public decimal Price { get; set; }
 
     }
