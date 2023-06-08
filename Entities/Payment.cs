@@ -1,4 +1,6 @@
-﻿namespace CarRentals.Entities
+﻿using Org.BouncyCastle.Bcpg.OpenPgp;
+
+namespace CarRentals.Entities
 {
     public class Payment : BaseEntity
     {
@@ -8,6 +10,9 @@
         public decimal TotalPrice { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
-        public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
+       public string BookingId { get; set; }
+        public Booking Bookings { get; set; }
+        public int PaymentCategoryId { get; set; }
+        public PaymentCategory PaymentCategory { get; set; }
     }
 }

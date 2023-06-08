@@ -1,3 +1,6 @@
+using CarRentals.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace CarRentals
 {
     public class Program
@@ -9,6 +12,12 @@ namespace CarRentals
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+
+
+            builder.Services.AddDbContext<CarRentalsContext>(option =>
+           option.UseMySQL(builder.Configuration.GetConnectionString("CarRentalsContext")));
+            builder.Services.AddScoped<DbInitializer>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -19,8 +28,11 @@ namespace CarRentals
                 app.UseHsts();
             }
 
+
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.SeedToDatabase();
 
             app.UseRouting();
 

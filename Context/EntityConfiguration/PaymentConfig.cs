@@ -8,7 +8,9 @@ namespace CarRentals.Context.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
-           
+            builder.HasOne(bk => bk.PaymentCategory)
+              .WithMany(c => c.Payments)
+              .IsRequired();
         }
     }
 }

@@ -28,11 +28,6 @@ namespace CarRentals.Context.EntityConfiguration
             builder.HasIndex(u => u.Phone)
                    .IsUnique();
 
-
-            builder.Property(u => u.Gender)
-                .IsRequired()
-                .HasMaxLength(10);
-
             builder.Property(u => u.Email)
                 .IsRequired();
 
