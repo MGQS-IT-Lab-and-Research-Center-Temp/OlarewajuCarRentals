@@ -48,6 +48,9 @@ namespace CarRentals.Context.EntityConfiguration
             builder.HasMany(bk => bk.CarCategories)
                 .WithOne(c => c.Car)
                 .IsRequired();
+            builder.HasMany(bk => bk.CarGalleries)
+                .WithOne(c => c.Car)
+                .IsRequired();
 
         }
     }

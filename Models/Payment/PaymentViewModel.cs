@@ -6,8 +6,6 @@ namespace CarRentals.Models.Payment
     {
         public string Id { get; set; }
         public string UserName { get; set; }  
-        public PaymentCategory PaymentCategory { get; set; }
-        public int PaymentCategoryId { get; set; }
         public string PaymentReference { get; set; }
     }
 }

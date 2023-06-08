@@ -1,5 +1,4 @@
 ﻿using CarRentals.Entities;
-using System.Reflection.Emit;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,6 +46,7 @@ namespace CarRentals.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentCategory> PaymentCategories { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
 
