@@ -8,5 +8,6 @@ namespace CarRentals.Repository.Interface
         List<Car> GetCars();
         List<Car> GetCars(Expression<Func<Car, bool>> expression);
         Car GetCar(Expression<Func<Car, bool>> expression);
+
     }
 }

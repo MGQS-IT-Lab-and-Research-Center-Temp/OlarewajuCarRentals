@@ -16,8 +16,4 @@
     <PackageReference Include="NewId" Version="4.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\PaymentCategory\" />
-  </ItemGroup>
-
 </Project>

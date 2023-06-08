@@ -7,6 +7,6 @@ namespace CarRentals.Repository.Interface
     {
         Comment GetComment(string id);
         Comment GetComment(Expression<Func<Comment, bool>> expression);
-        List<Comment> GetAllComments();
+        List<Comment> GetAllComments(Expression<Func<Comment, bool>> expression);
     }
 }
