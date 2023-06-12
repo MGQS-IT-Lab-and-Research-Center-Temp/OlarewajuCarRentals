@@ -61,6 +61,7 @@ namespace CarRentals.Context
                     HashSalt = salt,
                     PasswordHash = HashingHelper.HashPassword(password, salt),
                     Email = "admin@gmail.com",
+                    Phone ="07039661664",
                     RoleId = admin.Id,
                     CreatedBy = "System",
                     DateCreated = DateTime.Now,

@@ -9,6 +9,9 @@ namespace CarRentals.Context.EntityConfiguration
         public void Configure(EntityTypeBuilder<Car> builder)
         {
             builder.ToTable("Cars");
+            builder.HasKey(c => c.Id);
+
+
 
             builder.Property(c => c.Name)
                 .IsRequired()
@@ -18,8 +21,10 @@ namespace CarRentals.Context.EntityConfiguration
 
             builder.Property(c => c.PlateNumber)
                 .IsRequired()
-                .HasColumnType("text")
                 .HasMaxLength(11);
+
+            builder.HasIndex(c => c.PlateNumber)
+                  .IsUnique();
 
             builder.Property(c => c.Price)
                 .IsRequired()
@@ -30,8 +35,6 @@ namespace CarRentals.Context.EntityConfiguration
               .HasColumnType("text")
               .HasMaxLength(11);
 
-            builder.HasIndex(c => c.PlateNumber)
-                  .IsUnique();
 
             builder.Property(c => c.CoverImageUrl)
                 .HasColumnType("varchar(255)");
@@ -48,6 +51,7 @@ namespace CarRentals.Context.EntityConfiguration
             builder.HasMany(bk => bk.CarCategories)
                 .WithOne(c => c.Car)
                 .IsRequired();
+
             builder.HasMany(bk => bk.CarGalleries)
                 .WithOne(c => c.Car)
                 .IsRequired();

@@ -16,6 +16,8 @@ namespace CarRentals
 
             builder.Services.AddDbContext<CarRentalsContext>(option =>
            option.UseMySQL(builder.Configuration.GetConnectionString("CarRentalsContext")));
+
+
             builder.Services.AddScoped<DbInitializer>();
 
             var app = builder.Build();

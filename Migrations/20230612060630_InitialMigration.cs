@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarRentals.Migrations
 {
-    public partial class initialmigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,13 +18,13 @@ namespace CarRentals.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
                     Name = table.Column<string>(type: "text", maxLength: 25, nullable: false),
-                    Description = table.Column<string>(type: "text", maxLength: 11, nullable: false),
-                    PlateNumber = table.Column<string>(type: "text", maxLength: 11, nullable: false),
-                    CoverImageUrl = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Description = table.Column<string>(type: "text", maxLength: 11, nullable: true),
+                    PlateNumber = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
+                    CoverImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AailabilityStaus = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -40,10 +40,10 @@ namespace CarRentals.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -59,9 +59,9 @@ namespace CarRentals.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -78,9 +78,9 @@ namespace CarRentals.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
                     RoleName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    Description = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -96,12 +96,11 @@ namespace CarRentals.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CarId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
-                    URL = table.Column<string>(type: "longtext", nullable: false),
-                    CarId1 = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CarId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true),
+                    URL = table.Column<string>(type: "longtext", nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -110,8 +109,8 @@ namespace CarRentals.Migrations
                 {
                     table.PrimaryKey("PK_CarGalleries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CarGalleries_Cars_CarId1",
-                        column: x => x.CarId1,
+                        name: "FK_CarGalleries_Cars_CarId",
+                        column: x => x.CarId,
                         principalTable: "Cars",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -124,8 +123,8 @@ namespace CarRentals.Migrations
                 {
                     CategoryId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CarId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -157,11 +156,11 @@ namespace CarRentals.Migrations
                     LastName = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false),
                     Phone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
                     Email = table.Column<string>(type: "varchar(255)", nullable: false),
-                    HashSalt = table.Column<string>(type: "longtext", nullable: false),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: false),
+                    HashSalt = table.Column<string>(type: "longtext", nullable: true),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true),
                     RoleId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -186,8 +185,8 @@ namespace CarRentals.Migrations
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CarId = table.Column<string>(type: "varchar(255)", nullable: false),
                     AdditionalComment = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -218,8 +217,8 @@ namespace CarRentals.Migrations
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CarId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CommentText = table.Column<string>(type: "text", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -247,15 +246,14 @@ namespace CarRentals.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    PaymentReference = table.Column<string>(type: "longtext", nullable: false),
-                    CarId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    PaymentReference = table.Column<string>(type: "longtext", nullable: true),
+                    CarId = table.Column<string>(type: "varchar(255)", nullable: true),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    BookingId = table.Column<string>(type: "longtext", nullable: false),
-                    PaymentCategoryId = table.Column<int>(type: "int", nullable: false),
-                    PaymentCategoryId1 = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true),
+                    BookingId = table.Column<string>(type: "longtext", nullable: true),
+                    PaymentCategoryId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -267,11 +265,10 @@ namespace CarRentals.Migrations
                         name: "FK_Payments_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Payments_PaymentCategories_PaymentCategoryId1",
-                        column: x => x.PaymentCategoryId1,
+                        name: "FK_Payments_PaymentCategories_PaymentCategoryId",
+                        column: x => x.PaymentCategoryId,
                         principalTable: "PaymentCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -279,8 +276,7 @@ namespace CarRentals.Migrations
                         name: "FK_Payments_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -289,13 +285,13 @@ namespace CarRentals.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true),
                     CarId = table.Column<string>(type: "varchar(255)", nullable: false),
                     IsPaid = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    BookingReference = table.Column<string>(type: "longtext", nullable: false),
-                    PaymentId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: false),
+                    BookingReference = table.Column<string>(type: "longtext", nullable: true),
+                    PaymentId = table.Column<string>(type: "varchar(255)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -313,14 +309,12 @@ namespace CarRentals.Migrations
                         name: "FK_Bookings_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bookings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -346,9 +340,9 @@ namespace CarRentals.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarGalleries_CarId1",
+                name: "IX_CarGalleries_CarId",
                 table: "CarGalleries",
-                column: "CarId1");
+                column: "CarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarReport_CarId",
@@ -382,9 +376,9 @@ namespace CarRentals.Migrations
                 column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_PaymentCategoryId1",
+                name: "IX_Payments_PaymentCategoryId",
                 table: "Payments",
-                column: "PaymentCategoryId1");
+                column: "PaymentCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_UserId",

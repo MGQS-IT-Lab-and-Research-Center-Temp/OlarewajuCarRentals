@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentals.Migrations
 {
     [DbContext(typeof(CarRentalsContext))]
-    [Migration("20230608141427_initialmigration")]
-    partial class initialmigration
+    [Migration("20230612063023_AddedSomeEntitiesinBooking")]
+    partial class AddedSomeEntitiesinBooking
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,8 +26,10 @@ namespace CarRentals.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<DateTime>("BookedTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("BookingReference")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CarId")
@@ -35,7 +37,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -51,15 +52,15 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PaymentId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<DateTime>("ReturnTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -83,18 +84,15 @@ namespace CarRentals.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("CoverImageUrl")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("text");
 
@@ -105,7 +103,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
@@ -116,7 +113,7 @@ namespace CarRentals.Migrations
                     b.Property<string>("PlateNumber")
                         .IsRequired()
                         .HasMaxLength(11)
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(11)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -138,7 +135,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -151,7 +147,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("CarId", "CategoryId");
@@ -166,15 +161,11 @@ namespace CarRentals.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CarId1")
+                    b.Property<string>("CarId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -187,20 +178,17 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("URL")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarId1");
+                    b.HasIndex("CarId");
 
                     b.ToTable("CarGalleries");
                 });
@@ -220,7 +208,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -233,7 +220,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
@@ -255,14 +241,12 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsDeleted")
@@ -272,11 +256,9 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -298,7 +280,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -311,7 +292,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
@@ -333,15 +313,12 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("BookingId")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CarId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -354,32 +331,26 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PaymentCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentCategoryId1")
+                    b.Property<string>("PaymentCategoryId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("PaymentReference")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CarId");
 
-                    b.HasIndex("PaymentCategoryId1");
+                    b.HasIndex("PaymentCategoryId");
 
                     b.HasIndex("UserId");
 
@@ -392,7 +363,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -405,11 +375,9 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -423,14 +391,12 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
@@ -441,7 +407,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RoleName")
@@ -463,7 +428,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
@@ -479,7 +443,6 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("HashSalt")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsDeleted")
@@ -494,11 +457,9 @@ namespace CarRentals.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
@@ -533,15 +494,11 @@ namespace CarRentals.Migrations
 
                     b.HasOne("CarRentals.Entities.Payment", "Payment")
                         .WithOne("Bookings")
-                        .HasForeignKey("CarRentals.Entities.Booking", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarRentals.Entities.Booking", "PaymentId");
 
                     b.HasOne("CarRentals.Entities.User", "User")
                         .WithMany("Bookings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Car");
 
@@ -573,7 +530,7 @@ namespace CarRentals.Migrations
                 {
                     b.HasOne("CarRentals.Entities.Car", "Car")
                         .WithMany("CarGalleries")
-                        .HasForeignKey("CarId1")
+                        .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -622,21 +579,17 @@ namespace CarRentals.Migrations
                 {
                     b.HasOne("CarRentals.Entities.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarId");
 
                     b.HasOne("CarRentals.Entities.PaymentCategory", "PaymentCategory")
                         .WithMany("Payments")
-                        .HasForeignKey("PaymentCategoryId1")
+                        .HasForeignKey("PaymentCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CarRentals.Entities.User", "User")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Car");
 
@@ -676,8 +629,7 @@ namespace CarRentals.Migrations
 
             modelBuilder.Entity("CarRentals.Entities.Payment", b =>
                 {
-                    b.Navigation("Bookings")
-                        .IsRequired();
+                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("CarRentals.Entities.PaymentCategory", b =>

@@ -8,8 +8,11 @@ namespace CarRentals.Context.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
+            builder.HasKey(p => p.Id);
+
             builder.HasOne(bk => bk.PaymentCategory)
               .WithMany(c => c.Payments)
+              .HasForeignKey(p=>p.PaymentCategoryId)
               .IsRequired();
         }
     }
