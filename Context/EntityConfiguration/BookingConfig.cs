@@ -20,9 +20,7 @@ namespace CarRentals.Context.EntityConfiguration
                  .WithMany(c => c.Bookings)
                  .HasForeignKey(bk => bk.UserId);
 
-            builder.HasOne(bk=>bk.Payment)
-                .WithOne(p=>p.Bookings)
-                .HasForeignKey<Booking>(bk => bk.PaymentId);
+         
         }
     }
 }

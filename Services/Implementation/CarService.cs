@@ -205,7 +205,61 @@ namespace CarRentals.Services.Implementation
 
         public CarResponseModel GetCar(string carId)
         {
-            throw new NotImplementedException();
+            var response = new CarResponseModel();
+            var carExist = _unitOfWork.Cars.Exists(q => q.Id == carId && q.IsDeleted == false);
+            //var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
+            //var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var car = new Car();
+
+            if (!carExist)
+            {
+                response.Message = $"car with id {carId} does not exist!";
+                return response;
+            }
+
+            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted &&  c.AailabilityStaus == true); /* _unitOfWork.Questions.GetQuestion(q => q.Id == id*/
+                                                //&& q.UserId == userIdClaim
+                                                //&& !q.IsDeleted);
+
+            if(car is null)
+            {
+                response.Message = "car not found!";
+                return response;
+            }
+
+            response.Message = "Success";
+            response.Status = true;
+            response.Data = new CarViewModel
+            {
+                Id = car.Id,
+                Name = car.Name,
+                CoverImageURL = car.CoverImageUrl,
+                CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
+                {
+                    Id = cg.Id,
+                    Name = cg.Name,
+                    URL = cg.URL
+                }).ToList(),
+                Comments = car.Comments
+                            .Where(c => !c.IsDeleted)
+                            .Select(c => new CommentViewModel
+                            {
+                                Id = c.Id,
+                                UserId = c.UserId,
+                                CommentText = c.CommentText,
+                                UserName = $"{c.User.FirstName} {c.User.LastName}"
+                            }).ToList(),
+                CarReports = car.CarReports
+                                  .Where(cr => !cr.IsDeleted)
+                                  .Select(cr => new CarReportViewModel
+                                  {
+                                      Id = cr.Id,
+                                      CarReporter = $"{cr.User.FirstName} {cr.User.LastName}",
+                                      AdditionalComment = cr.AdditionalComment
+                                  }).ToList()
+            };
+
+            return response;
         }
 
         public BaseResponseModel Update(string carId, UpdateCarViewModel request)
