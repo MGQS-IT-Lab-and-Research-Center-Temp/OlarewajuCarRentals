@@ -1,12 +1,10 @@
-﻿using CarRentals.Context.EntityConfiguration;
-using CarRentals.Entities;
+﻿using CarRentals.Entities;
 using CarRentals.Models;
 using CarRentals.Models.Car;
 using CarRentals.Models.CarReport;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Linq.Expressions;
 using System.Security.Claims;
 
@@ -217,9 +215,8 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted &&  c.AailabilityStaus == true); /* _unitOfWork.Questions.GetQuestion(q => q.Id == id*/
-                                                //&& q.UserId == userIdClaim
-                                                //&& !q.IsDeleted);
+            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted &&  c.AailabilityStaus == true); 
+          
 
             if(car is null)
             {
