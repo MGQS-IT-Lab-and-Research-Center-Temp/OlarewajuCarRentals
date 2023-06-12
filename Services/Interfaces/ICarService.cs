@@ -1,16 +1,14 @@
-using IdealDiscuss.Models;
-using IdealDiscuss.Models.Question;
+using CarRentals.Models;
+using CarRentals.Models.Car;
 
-namespace IdealDiscuss.Service.Interface
+namespace CarRentals.Service.Interface
 {
-    public interface IQuestionService
+    public interface ICarService
     {
-        BaseResponseModel Create(CreateQuestionViewModel createQuestionDto);
-        BaseResponseModel Delete(string questionId);
-        BaseResponseModel Update(string questionId, UpdateQuestionViewModel updatequestionDto);
-        QuestionResponseModel GetQuestion(string questionId);
-        QuestionsResponseModel GetAllQuestion();
-        QuestionsResponseModel GetQuestionsByCategoryId(string categoryId);
-        QuestionsResponseModel DisplayQuestion();
+        BaseResponseModel Create(CreateCarViewModel createcarDto);
+        BaseResponseModel Delete(string carId);
+        BaseResponseModel Update(string carId, UpdateCarViewModel request);
+        CarResponseModel GetCar(string carId);
+        CarsResponseModel GetAllCar();
     }
 }
