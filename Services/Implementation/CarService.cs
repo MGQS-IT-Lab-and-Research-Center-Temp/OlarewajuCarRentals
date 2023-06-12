@@ -2,9 +2,12 @@
 using CarRentals.Entities;
 using CarRentals.Models;
 using CarRentals.Models.Car;
+using CarRentals.Models.CarReport;
+using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
 using Org.BouncyCastle.Asn1.Ocsp;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace CarRentals.Services.Implementation
@@ -28,13 +31,13 @@ namespace CarRentals.Services.Implementation
 
             if (createcarDto.CoverPhoto != null)
             {
-                string folder = "books/cover/";
-                createcarDto.CoverImageUrl =  UploadImage(folder, createcarDto.CoverPhoto);
+                string folder = "cars/cover/";
+                createcarDto.CoverImageUrl = UploadImage(folder, createcarDto.CoverPhoto);
             }
 
             if (createcarDto.GalleryFiles != null)
             {
-                string folder = "books/gallery/";
+                string folder = "cars/gallery/";
 
                 createcarDto.Gallery = new List<CarGalleryModel>();
 
@@ -43,7 +46,7 @@ namespace CarRentals.Services.Implementation
                     var gallery = new CarGalleryModel()
                     {
                         Name = file.FileName,
-                        URL =  UploadImage(folder, file)
+                        URL = UploadImage(folder, file)
                     };
                     createcarDto.Gallery.Add(gallery);
                 }
@@ -58,7 +61,7 @@ namespace CarRentals.Services.Implementation
                 AailabilityStaus = true,
                 Price = createcarDto.Price,
             };
-             newcar.CarGalleries = new List<CarGallery>();
+            newcar.CarGalleries = new List<CarGallery>();
 
             foreach (var file in newcar.CarGalleries)
             {
@@ -106,12 +109,98 @@ namespace CarRentals.Services.Implementation
 
         public BaseResponseModel Delete(string carId)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponseModel();
+
+            Expression<Func<Car, bool>> expression = (q => (q.Id == carId)
+                                        && (q.Id == carId
+                                        && q.IsDeleted == false
+                                        ));
+
+            var carExist = _unitOfWork.Cars.Exists(expression);
+
+            if (!carExist)
+            {
+                response.Message = "car does not exist!";
+                return response;
+            }
+
+
+            var car = _unitOfWork.Cars.Get(carId);
+
+            car.IsDeleted = true;
+
+            try
+            {
+                _unitOfWork.Cars.Update(car);
+                _unitOfWork.SaveChanges();
+                response.Message = "Question deleted successfully!";
+                response.Status = true;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Question delete failed: {ex.Message}";
+                return response;
+            }
         }
 
         public CarsResponseModel GetAllCar()
         {
-            throw new NotImplementedException();
+            var response = new CarsResponseModel();
+
+            try
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+                
+
+                var cars = _unitOfWork.Cars.GetCars();
+
+                if (cars.Count == 0)
+                {
+                    response.Message = "No car found!";
+                    return response;
+                }
+
+                response.Data = cars
+                    .Where(q => q.IsDeleted == false && q.AailabilityStaus == true)
+                    .Select(car => new CarViewModel
+                    {
+                        Id = car.Id,
+                        Name = car.Name,
+                        PlateNumber = car.PlateNumber,
+                        CoverImageURL = car.CoverImageUrl,
+                        CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
+                        {
+                            Id = cg.Id,
+                            Name = cg.Name,
+                            URL = cg.URL
+                        }).ToList(),
+                        Comments = car.Comments
+                        .Select(comment => new CommentViewModel
+                        {
+                            Id = comment.Id,
+                            CommentText = comment.CommentText,
+                            UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
+                        }).ToList(),
+                        CarReports = car.CarReports
+                        .Select(report => new CarReportViewModel
+                        {
+                            Id = report.Id,
+                            CarReporter = $"{report.User.FirstName} {report.User.LastName}"
+                        }).ToList(),
+                    }).ToList();
+
+                response.Status = true;
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"An error occured: {ex.StackTrace}";
+                return response;
+            }
+
+            return response;
         }
 
         public CarResponseModel GetCar(string carId)
@@ -137,13 +226,13 @@ namespace CarRentals.Services.Implementation
             car.Name = request.Name;
             if (request.CoverPhoto != null)
             {
-                string folder = "books/cover/";
+                string folder = "cars/cover/";
                 request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
             }
             car.CoverImageUrl = request.CoverImageUrl;
             if (request.GalleryFiles != null)
             {
-                string folder = "books/gallery/";
+                string folder = "cars/gallery/";
 
                 request.Gallery = new List<CarGalleryModel>();
 
@@ -167,7 +256,7 @@ namespace CarRentals.Services.Implementation
                     URL = file.URL
                 });
             }
-             car.ModifiedBy = modifiedBy;
+            car.ModifiedBy = modifiedBy;
 
             try
             {
