@@ -28,6 +28,7 @@ namespace CarRentals.Repository.Implementation
                 .Include(u => u.Bookings)
                 .ThenInclude(bk => bk.Car)
                 .ThenInclude(c => c.Comments)
+                .Include(c=>c.Role)
                 .SingleOrDefault(expression);
             return user;
         }

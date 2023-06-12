@@ -16,10 +16,11 @@ namespace CarRentals.Services.Implementation
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CarService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+        public CarService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
         public BaseResponseModel Create(CreateCarViewModel createcarDto)
         {
