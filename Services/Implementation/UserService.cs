@@ -91,7 +91,7 @@ namespace CarRentals.Services.Implementation
             string hashedPassword = HashingHelper.HashPassword(request.Password, saltString);
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userExist = _unitOfWork.Users.Exists(x => x.Email == request.Email);
-
+             
             if (userExist)
             {
                 response.Message = $"User with  {request.Email} already exist";
