@@ -4,6 +4,7 @@ using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Services.Interfaces;
 using System.Security.Claims;
+using static CarRentals.Models.Comment.CommentResponse;
 
 namespace CarRentals.Services.Implementation
 {
@@ -121,14 +122,59 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CommentResponse.CommentsResponseModel GetAllComment()
+        public CommentsResponseModel GetAllComment()
         {
-            throw new NotImplementedException();
+            var response = new CommentsResponseModel();
+
+            var comment = _unitOfWork.Comments.GetAllComments(c => c.IsDeleted == false);
+
+            if (comment.Count == 0)
+            {
+                response.Message = "No comments yet!";
+                return response;
+            }
+
+            response.Data = comment
+                    .Select(comment => new CommentViewModel
+                    {
+                        Id = comment.Id,
+                        CarId = comment.CarId,
+                        UserId = comment.UserId,
+                        UserName = $"{comment.User.FirstName} {comment.User.LastName}",
+                        CommentText = comment.CommentText
+                    }).ToList();
+
+            response.Status = true;
+            response.Message = "Success";
+
+            return response;
         }
 
-        public CommentResponse.CommentResponseModel GetComment(string commentId)
+        public CommentResponseModel GetComment(string commentId)
         {
-            throw new NotImplementedException();
+            var response = new CommentResponseModel();
+            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+
+            if (!commentexist)
+            {
+                response.Message = $"Comment does not exist.";
+                return response;
+            }
+
+            var comment = _unitOfWork.Comments.GetComment(commentId);
+
+            response.Message = "Success";
+            response.Status = true;
+            response.Data = new CommentViewModel
+            {
+                Id = comment.Id,
+                CarId = comment.CarId,
+                UserId = comment.UserId,
+                UserName = $"{comment.User.FirstName} {comment.User.LastName}",
+                CommentText = comment.CommentText,
+            };
+
+            return response; 
         }
 
         public BaseResponseModel UpdateComment(string commentId, UpdateCommentViewModel request)
