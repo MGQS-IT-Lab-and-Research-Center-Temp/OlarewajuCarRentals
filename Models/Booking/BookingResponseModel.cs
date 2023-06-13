@@ -2,12 +2,12 @@
 
 namespace CarRentals.Models.Booking
 {
-    public class BookingResponseModel
+    public class BookingResponseModel :BaseResponseModel
     {
 
         public BookingViewModel Data { get; set; }
     }
-    public class BookingssResponseModel : BaseResponseModel
+    public class BookingsResponseModel : BaseResponseModel
     {
         public List<BookingViewModel> Data { get; set; }
     }

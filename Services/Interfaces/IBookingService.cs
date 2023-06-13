@@ -1,16 +1,18 @@
-﻿using CarRentals.Models;
+﻿using CarRentals.Entities;
+using CarRentals.Models;
 using CarRentals.Models.Booking;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentals.Services.Interfaces
 {
     public interface IBookingService
     {
-        BaseResponseModel BookTicket(CreateBookingViewModel model);
+        BaseResponseModel BookCar(CreateBookingViewModel model);
 
-        Bookin GetBooking(int id);
+        BookingResponseModel GetBooking(string id);
 
-        BookingDTO GetByReference(string reference);
-
-        IList<BookingDTO> GetBookings();
+        BookingResponseModel GetByReference(string reference);
+       
+        BookingsResponseModel GetBookings();
     }
 }
