@@ -45,7 +45,7 @@ namespace CarRentals.Services.Implementation
             foreach (var booking in bookings)
             {
                 var bookeduser = _unitOfWork.Users.Get(booking.UserId);
-                if (bookeduser != LoggedInuser)
+                if (bookeduser.Bookings.Count == 0)
                 {
                     response.Message = "You cannot comment not on this car!!";
                     return response;

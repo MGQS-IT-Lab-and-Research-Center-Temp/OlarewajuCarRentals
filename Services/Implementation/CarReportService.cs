@@ -26,6 +26,7 @@ namespace CarRentals.Services.Implementation
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var reporter = _unitOfWork.Users.Get(userIdClaim);
             var car = _unitOfWork.Cars.Get(request.CarId);
+            var bookings = _unitOfWork.Bookings.GetAllBookings(bk => bk.CarId == request.CarId);
 
             if (reporter is null)
             {
@@ -37,6 +38,15 @@ namespace CarRentals.Services.Implementation
             {
                 response.Message = "car not found!";
                 return response;
+            }
+            foreach (var booking in bookings)
+            {
+                var bookeduser = _unitOfWork.Users.Get(booking.UserId);
+                if (bookeduser != reporter)
+                {
+                    response.Message = "You cannot comment not on this car!!";
+                    return response;
+                }
             }
 
             var carReport = new CarReport
@@ -119,7 +129,7 @@ namespace CarRentals.Services.Implementation
                 Id = reportId,
                 AdditionalComment = carReport.AdditionalComment,
                 CarId = carReport.Car.Id,
-                CarReporter =$"{carReport.User.FirstName}{carReport.User.LastName}",
+                CarReporter = $"{carReport.User.FirstName}{carReport.User.LastName}",
             };
 
             return response;
@@ -127,7 +137,31 @@ namespace CarRentals.Services.Implementation
 
         public CarReportsResponseModel GetCarReports(string carId)
         {
-            throw new NotImplementedException();
+            var response = new CarReportsResponseModel();
+
+            try
+            {
+                var carReport = _unitOfWork.CarReports.GetCarReports(carId);
+
+                response.Data = carReport
+                    .Select(cr => new CarReportViewModel
+                    {
+                        Id = cr.Id,
+                        CarId = cr.CarId,
+                        CarReporter = $"{cr.User.FirstName}{cr.User.LastName}",
+                        AdditionalComment = cr.AdditionalComment,
+                    }).ToList();
+
+                response.Status = true;
+                response.Message = "Success";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"An error occured: {ex.Message}";
+                return response;
+            }
         }
 
         public BaseResponseModel UpdateCarReport(string id, UpdateCarReportViewModel request)
@@ -163,4 +197,3 @@ namespace CarRentals.Services.Implementation
         }
     }
 }
- 

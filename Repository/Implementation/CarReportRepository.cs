@@ -22,9 +22,10 @@ namespace CarRentals.Repository.Implementation
             return carReport;
         }
 
-        public List<CarReport> GetCarReports()
+        public List<CarReport> GetCarReports(string carId)
         {
             var carReport = _context.CarReports
+                .Where(cr => cr.CarId.Equals(carId))
                 .Include(cr => cr.User)
                 .Include(cr => cr.Car)
                 .ToList();
