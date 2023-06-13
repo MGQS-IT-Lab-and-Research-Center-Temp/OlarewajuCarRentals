@@ -7,7 +7,7 @@ namespace CarRentals.Models.Booking
 
         public BookingViewModel Data { get; set; }
     }
-    public class CarsResponseModel : BaseResponseModel
+    public class BookingssResponseModel : BaseResponseModel
     {
         public List<BookingViewModel> Data { get; set; }
     }

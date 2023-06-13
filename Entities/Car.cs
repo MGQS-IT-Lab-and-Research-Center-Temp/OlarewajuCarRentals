@@ -11,7 +11,6 @@
         public bool AailabilityStaus { get; set; }  
         public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
         public ICollection<CarCategory> CarCategories { get; set; } = new HashSet<CarCategory>();
-        public ICollection<CarReport> CarReports { get; set; } = new HashSet<CarReport>();
         public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
         public ICollection<CarGallery> CarGalleries { get; set; } = new HashSet<CarGallery>();
 

@@ -1,5 +1,4 @@
-﻿using CarRentals.Models.CarReport;
-using CarRentals.Models.Comment;
+﻿using CarRentals.Models.Comment;
 
 namespace CarRentals.Models.Car
 {
@@ -13,6 +12,5 @@ namespace CarRentals.Models.Car
         public string PlateNumber { get; set; }
         public List<CarGalleryModel> CarGalleries { get; set; }
         public List<CommentViewModel> Comments { get; set; }
-        public List<CarReportViewModel> CarReports { get; set; }
     }
 }

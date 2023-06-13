@@ -14,6 +14,5 @@ namespace CarRentals.Entities
         public Role Role { get; set; }
         public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>(); 
         public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
-        public ICollection<CarReport> CarReport { get; set; } = new HashSet<CarReport>();
     }
 }

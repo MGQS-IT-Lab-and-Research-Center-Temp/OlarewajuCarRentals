@@ -194,38 +194,6 @@ namespace CarRentals.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CarReport",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    CarId = table.Column<string>(type: "varchar(255)", nullable: false),
-                    AdditionalComment = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    CreatedBy = table.Column<string>(type: "longtext", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "longtext", nullable: true),
-                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CarReport", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CarReport_Cars_CarId",
-                        column: x => x.CarId,
-                        principalTable: "Cars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CarReport_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -278,16 +246,6 @@ namespace CarRentals.Migrations
                 column: "CarId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarReport_CarId",
-                table: "CarReport",
-                column: "CarId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CarReport_UserId",
-                table: "CarReport",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cars_PlateNumber",
                 table: "Cars",
                 column: "PlateNumber",
@@ -337,9 +295,6 @@ namespace CarRentals.Migrations
 
             migrationBuilder.DropTable(
                 name: "CarGalleries");
-
-            migrationBuilder.DropTable(
-                name: "CarReport");
 
             migrationBuilder.DropTable(
                 name: "Comments");

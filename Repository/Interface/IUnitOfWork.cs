@@ -9,7 +9,6 @@ public interface IUnitOfWork : IDisposable
     ICategoryRepository Categories { get; }
     ICarRepository Cars { get; }
     ICommentRepository Comments { get; }
-    ICarReportRepository CarReports { get; }
     IRoleRepository Roles { get; }
     int SaveChanges();
 }

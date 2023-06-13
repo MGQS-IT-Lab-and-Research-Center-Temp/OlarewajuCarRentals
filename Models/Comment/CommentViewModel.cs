@@ -1,6 +1,4 @@
-﻿using CarRentals.Models.CarReport;
-
-namespace CarRentals.Models.Comment;
+﻿namespace CarRentals.Models.Comment;
 
 public class CommentViewModel
 {

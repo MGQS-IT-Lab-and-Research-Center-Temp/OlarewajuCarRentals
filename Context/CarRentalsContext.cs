@@ -42,7 +42,6 @@ namespace CarRentals.Context
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarCategory> CarCategories { get; set; }
         public DbSet<CarGallery> CarGalleries { get; set; }
-        public DbSet<CarReport> CarReports { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Role> Roles { get; set; }

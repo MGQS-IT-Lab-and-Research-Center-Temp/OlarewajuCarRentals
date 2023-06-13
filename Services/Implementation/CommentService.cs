@@ -36,22 +36,18 @@ namespace CarRentals.Services.Implementation
             }
 
             var car = _unitOfWork.Cars.Get(request.CarId);
+            var bookedCarUsers = _unitOfWork.Users.GetUsers(u => bookings.Any(bk => bk.UserId == u.Id));
 
-            if(car is null)
+            if (car is null)
             {
                 response.Message = "car not found";
                 return response;
             }
-            foreach (var booking in bookings)
+            if(!bookedCarUsers.Contains(LoggedInuser))
             {
-                var bookeduser = _unitOfWork.Users.Get(booking.UserId);
-                if (bookeduser.Bookings.Count == 0)
-                {
-                    response.Message = "You cannot comment not on this car!!";
-                    return response;
-                }
+                response.Message = " You cannot comment on this car ";
+                return response;
             }
-
             if (string.IsNullOrWhiteSpace(request.CommentText))
             {
                 response.Message = "Comment text is required!";

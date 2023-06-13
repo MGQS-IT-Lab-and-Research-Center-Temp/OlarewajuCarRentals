@@ -18,8 +18,6 @@ namespace CarRentals.Repository.Implementation
         {
             var car = _context.Cars.Include(c => c.Comments)
                                           .ThenInclude(c => c.User)
-                                          .Include(c => c.CarReports)
-                                          .ThenInclude(cr => cr.User)
                                           .Include(c => c.CarGalleries)
                                           .SingleOrDefault(expression);
             return car;
@@ -31,8 +29,6 @@ namespace CarRentals.Repository.Implementation
                .Include(uq => uq.CarGalleries)
                .Include(c => c.Comments)
                .ThenInclude(u => u.User)
-               .Include(qr => qr.CarReports)
-                .ThenInclude(cr => cr.User)
                .ToList();
 
             return cars;
@@ -45,7 +41,6 @@ namespace CarRentals.Repository.Implementation
                           .Include(u => u.CarGalleries)
                           .Include(c => c.Comments)
                           .ThenInclude(u => u.User)
-                          .Include(qr => qr.CarReports)
                           .ToList();
 
             return cars;

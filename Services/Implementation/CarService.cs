@@ -1,7 +1,6 @@
 ﻿using CarRentals.Entities;
 using CarRentals.Models;
 using CarRentals.Models.Car;
-using CarRentals.Models.CarReport;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
@@ -182,12 +181,6 @@ namespace CarRentals.Services.Implementation
                             CommentText = comment.CommentText,
                             UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
                         }).ToList(),
-                        CarReports = car.CarReports
-                        .Select(report => new CarReportViewModel
-                        {
-                            Id = report.Id,
-                            CarReporter = $"{report.User.FirstName} {report.User.LastName}"
-                        }).ToList(),
                     }).ToList();
 
                 response.Status = true;
@@ -247,14 +240,6 @@ namespace CarRentals.Services.Implementation
                                 CommentText = c.CommentText,
                                 UserName = $"{c.User.FirstName} {c.User.LastName}"
                             }).ToList(),
-                CarReports = car.CarReports
-                                  .Where(cr => !cr.IsDeleted)
-                                  .Select(cr => new CarReportViewModel
-                                  {
-                                      Id = cr.Id,
-                                      CarReporter = $"{cr.User.FirstName} {cr.User.LastName}",
-                                      AdditionalComment = cr.AdditionalComment
-                                  }).ToList()
             };
 
             return response;

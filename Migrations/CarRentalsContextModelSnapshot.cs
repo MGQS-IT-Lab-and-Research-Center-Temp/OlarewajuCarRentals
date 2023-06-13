@@ -185,48 +185,6 @@ namespace CarRentals.Migrations
                     b.ToTable("CarGalleries");
                 });
 
-            modelBuilder.Entity("CarRentals.Entities.CarReport", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("AdditionalComment")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("CarId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CarReport", (string)null);
-                });
-
             modelBuilder.Entity("CarRentals.Entities.Category", b =>
                 {
                     b.Property<string>("Id")
@@ -445,25 +403,6 @@ namespace CarRentals.Migrations
                     b.Navigation("Car");
                 });
 
-            modelBuilder.Entity("CarRentals.Entities.CarReport", b =>
-                {
-                    b.HasOne("CarRentals.Entities.Car", "Car")
-                        .WithMany("CarReports")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CarRentals.Entities.User", "User")
-                        .WithMany("CarReport")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CarRentals.Entities.Comment", b =>
                 {
                     b.HasOne("CarRentals.Entities.Car", "Car")
@@ -502,8 +441,6 @@ namespace CarRentals.Migrations
 
                     b.Navigation("CarGalleries");
 
-                    b.Navigation("CarReports");
-
                     b.Navigation("Comments");
                 });
 
@@ -520,8 +457,6 @@ namespace CarRentals.Migrations
             modelBuilder.Entity("CarRentals.Entities.User", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("CarReport");
 
                     b.Navigation("Comments");
                 });

@@ -13,7 +13,6 @@ namespace CarRentals.Repository.Implementations
         public ICategoryRepository Categories { get; }
         public ICarRepository Cars { get; }
         public ICommentRepository Comments { get; }
-        public ICarReportRepository CarReports { get; }
 
         public IBookingRepository Bookings { get; }
 
@@ -24,7 +23,6 @@ namespace CarRentals.Repository.Implementations
             ICategoryRepository categoryRepository,
             ICarRepository carRepository,
             ICommentRepository commentRepository,
-            ICarReportRepository carReportRepository,
             IBookingRepository bookings)
         {
             _context = context;
@@ -33,7 +31,6 @@ namespace CarRentals.Repository.Implementations
             Categories = categoryRepository;
             Cars = carRepository;
             Comments = commentRepository;
-            CarReports = carReportRepository;
             Bookings = bookings;
         }
 
