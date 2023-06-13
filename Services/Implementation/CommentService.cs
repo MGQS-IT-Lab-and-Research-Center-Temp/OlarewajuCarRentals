@@ -26,9 +26,9 @@ namespace CarRentals.Services.Implementation
             var response = new BaseResponseModel();
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var user = _unitOfWork.Users.Get(userIdClaim);
-
-            if(user is null)
+            var LoggedInuser = _unitOfWork.Users.Get(userIdClaim);
+            var bookings = _unitOfWork.Bookings.GetAllBookings(bk => bk.CarId == request.CarId);
+            if(LoggedInuser is null)
             {
                 response.Message = "User not found";
                 return response;
@@ -41,9 +41,14 @@ namespace CarRentals.Services.Implementation
                 response.Message = "car not found";
                 return response;
             }
-           if(car.Bookings.)
+            foreach (var booking in bookings)
             {
-
+                var bookeduser = _unitOfWork.Users.Get(booking.UserId);
+                if (bookeduser != LoggedInuser)
+                {
+                    response.Message = "You cannot comment not on this car!!";
+                    return response;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(request.CommentText))
@@ -54,10 +59,10 @@ namespace CarRentals.Services.Implementation
 
             var comment = new Comment
             {
-                UserId = user.Id,
-                User = user,
-                QuestionId = question.Id,
-                Question = question,
+                UserId = LoggedInuser.Id,
+                User = LoggedInuser,
+                CarId = car.Id,
+                Car = car,
                 CommentText = request.CommentText,
                 CreatedBy = createdBy,
             };
@@ -80,7 +85,40 @@ namespace CarRentals.Services.Implementation
 
         public BaseResponseModel DeleteComment(string commentId)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponseModel();
+            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var user = _unitOfWork.Users.Get(userIdClaim);
+
+            if (!commentexist)
+            {
+                response.Message = "Comment  does not exist.";
+                return response;
+            }
+
+            var comment = _unitOfWork.Comments.Get(commentId);
+            if (comment.UserId != user.Id)
+            {
+                response.Message = "You can not delete this Comment!";
+                return response;
+            }
+
+            comment.IsDeleted = true;
+
+            try
+            {
+                _unitOfWork.Comments.Update(comment);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Comment  delete failed {ex.Message}";
+                return response;
+            }
+
+            response.Status = true;
+            response.Message = "Comment  deleted successfully.";
+            return response;
         }
 
         public CommentResponse.CommentsResponseModel GetAllComment()
@@ -95,7 +133,43 @@ namespace CarRentals.Services.Implementation
 
         public BaseResponseModel UpdateComment(string commentId, UpdateCommentViewModel request)
         {
-            throw new NotImplementedException();
+
+            var response = new BaseResponseModel();
+            var modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var user = _unitOfWork.Users.Get(userIdClaim);
+
+            if (!commentexist)
+            {
+                response.Message = "Comment  does not exist.";
+                return response;
+            }
+            var comment = _unitOfWork.Comments.Get(commentId);
+
+            if (comment.UserId != userIdClaim)
+            {
+                response.Message = "You can not update this comment";
+                return response;
+            }
+
+            comment.CommentText = request.CommentText;
+            comment.ModifiedBy = modifiedBy;
+
+            try
+            {
+                _unitOfWork.Comments.Update(comment);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Could not update the comment : {ex.Message}";
+                return response;
+            }
+            response.Status = true;
+            response.Message = "Comment  updated successfully.";
+
+            return response;
         }
     }
 }
