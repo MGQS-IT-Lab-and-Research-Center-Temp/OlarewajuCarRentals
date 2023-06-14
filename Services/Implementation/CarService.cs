@@ -149,8 +149,60 @@ namespace CarRentals.Services.Implementation
 
             try
             {
+                var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
                 var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                
+                Expression<Func<Booking, bool>> expression = bk => bk.UserId == userIdClaim;
+
+                var bookings = _unitOfWork.Bookings.GetAllBookings(expression);
+
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(u => bookings.Any(bk => bk.CarId == u.Id));
+
+                if (cars.Count == 0)
+                {
+                    response.Message = "No car found!";
+                    return response;
+                }
+
+                response.Data = cars
+                    .Where(q => q.IsDeleted == false && q.AailabilityStaus == true)
+                    .Select(car => new CarViewModel
+                    {
+                        Id = car.Id,
+                        Name = car.Name,
+                        PlateNumber = car.PlateNumber,
+                        CoverImageURL = car.CoverImageUrl,
+                        CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
+                        {
+                            Id = cg.Id,
+                            Name = cg.Name,
+                            URL = cg.URL
+                        }).ToList(),
+                        Comments = car.Comments
+                        .Select(comment => new CommentViewModel
+                        {
+                            Id = comment.Id,
+                            CommentText = comment.CommentText,
+                            UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
+                        }).ToList(),
+                    }).ToList();
+
+                response.Status = true;
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"An error occured: {ex.StackTrace}";
+                return response;
+            }
+
+            return response;
+        } 
+        public CarsResponseModel DisplayCars()
+        {
+            var response = new CarsResponseModel();
+
+            try
+            {
 
                 var cars = _unitOfWork.Cars.GetCars();
 
