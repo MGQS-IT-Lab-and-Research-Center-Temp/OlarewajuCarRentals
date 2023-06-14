@@ -16,4 +16,12 @@
     <PackageReference Include="NewId" Version="4.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Booking\" />
+    <Folder Include="Views\Car\" />
+    <Folder Include="Views\Category\" />
+    <Folder Include="Views\Comment\" />
+    <Folder Include="Views\Role\" />
+  </ItemGroup>
+
 </Project>
