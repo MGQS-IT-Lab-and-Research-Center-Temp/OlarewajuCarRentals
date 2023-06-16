@@ -1,83 +1,117 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CarRentals.Models.Car;
+using CarRentals.Service.Interface;
+using CarRentals.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentals.Controllers
 {
+
+    [Authorize]
     public class CarController : Controller
     {
-        // GET: CarController
-        public ActionResult Index()
+        private readonly ICarService _carService;
+        private readonly ICategoryService _categoryService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotyfService _notyf;
+
+        public CarController(
+            ICarService carService,
+            ICategoryService categoryService,
+            IHttpContextAccessor httpContextAccessor,
+            INotyfService notyf)
         {
+            _carService = carService;
+            _categoryService = categoryService;
+            _httpContextAccessor = httpContextAccessor;
+            _notyf = notyf;
+        }
+
+        public IActionResult Index()
+        {
+            var cars = _carService.GetAllCar();
+            ViewData["Message"] = cars.Message;
+            ViewData["Status"] = cars.Status;
+
+            return View(cars.Data);
+        }
+        [Authorize(Roles ="Admin")]
+        public IActionResult Create()
+        {
+            ViewBag.Categories = _categoryService.SelectCategories();
+            ViewData["Message"] = "";
+            ViewData["Status"] = false;
+
             return View();
         }
 
-        // GET: CarController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: CarController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CarController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult Create(CreateCarViewModel request)
         {
-            try
+            var response = _carService.Create(request);
+
+            if (response.Status is false)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
+                _notyf.Error(response.Message);
                 return View();
             }
+
+            _notyf.Success(response.Message);
+
+            return RedirectToAction("Index", "Car");
         }
 
-        // GET: CarController/Edit/5
-        public ActionResult Edit(int id)
+      
+
+        public IActionResult GetCarDetail(string id)
         {
-            return View();
+            var response = _carService.GetCar(id);
+            ViewData["Message"] = response.Message;
+            ViewData["Status"] = response.Status;
+
+            return View(response.Data);
         }
 
-        // POST: CarController/Edit/5
+        public IActionResult Update(string id)
+        {
+            var response = _carService.GetCar(id);
+
+            return View(response.Data);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Update(string id, UpdateCarViewModel request)
         {
-            try
+            var response = _carService.Update(id, request);
+
+            if (response.Status is false)
             {
-                return RedirectToAction(nameof(Index));
+                _notyf.Error(response.Message);
+
+                return RedirectToAction("Index", "Home");
             }
-            catch
+
+            _notyf.Success(response.Message);
+
+            return RedirectToAction("Index", "Question");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCar([FromRoute] string id)
+        {
+            var response = _carService.Delete(id);
+
+            if (response.Status is false)
             {
+                _notyf.Error(response.Message);
                 return View();
             }
-        }
 
-        // GET: CarController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            _notyf.Success(response.Message);
 
-        // POST: CarController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index", "Question");
         }
     }
 }

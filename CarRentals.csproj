@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -19,10 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Booking\" />
-    <Folder Include="Views\Car\" />
-    <Folder Include="Views\Category\" />
-    <Folder Include="Views\Comment\" />
-    <Folder Include="Views\Role\" />
   </ItemGroup>
 
 </Project>

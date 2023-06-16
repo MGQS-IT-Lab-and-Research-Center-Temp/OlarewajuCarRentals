@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using CarRentals.Service.Interface;
+using CarRentals.ActionFilter;
 
 namespace CarRentals.Controllers
 {
@@ -32,11 +33,11 @@ namespace CarRentals.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var questions = _carService.GetAllCar();
-            ViewData["Message"] = questions.Message;
-            ViewData["Status"] = questions.Status;
+            var cars = _carService.DisplayCars();
+            ViewData["Message"] = cars.Message;
+            ViewData["Status"] = cars.Status;
 
-            return View(questions.Data);
+            return View(cars.Data);
         }
 
         public IActionResult SignUp()

@@ -37,6 +37,14 @@ namespace CarRentals.Services.Implementation
                 response.Message = "car not found";
                 return response;
             }
+
+
+            if(car.AailabilityStaus is false)
+            {
+                response.Message = "car is unavailable6";
+                return response;
+            }
+
             var booking = new Booking
             {
                 CarId = model.CarId,

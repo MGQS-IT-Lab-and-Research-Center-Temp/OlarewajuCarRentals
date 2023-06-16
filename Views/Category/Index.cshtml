@@ -1,0 +1,41 @@
+﻿@model List<CarRentals.Models.Category.CategoryViewModel>
+@{
+    ViewData["Title"] = "Category List";
+    int count = 1;
+}
+
+<div>
+    <a asp-controller="Category" asp-action="Create" class="btn btn-outline-primary">Add New Category</a>
+</div>
+
+@await Html.PartialAsync("_ListAlert", Model)
+
+@if (Model is not null)
+{
+    <table class="table" >
+        <thead>
+            <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td scope="row">@count</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <div class="btn-group">
+                            <a asp-controller="Question" asp-action="GetQuestionByCategory" asp-route-id="@item.Id" class="btn btn-primary">View Questions</a>
+                        </div>
+                    </td>
+                </tr>
+                count++;
+            }
+        </tbody>
+    </table>
+}

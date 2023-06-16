@@ -6,13 +6,13 @@ namespace CarRentals.Models.Auth
     public class SignUpViewModel
     {
         [Required(ErrorMessage = "FirstName is required.")]
-        [MinLength(10, ErrorMessage = "The minimum lenght is 10.")]
+        [MinLength(3, ErrorMessage = "The minimum length is 3.")]
         [MaxLength(25)]
         public string FirstName { get; set; }
 
 
         [Required(ErrorMessage = "LastName is required.")]
-        [MinLength(10, ErrorMessage = "The minimum lenght is 10.")]
+        [MinLength(3, ErrorMessage = "The minimum lenght is 3.")]
         [MaxLength(25)]
         public string LastName { get; set; }
 

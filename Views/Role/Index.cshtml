@@ -1,0 +1,43 @@
+﻿@model List<CarRentals.Models.Role.RoleViewModel>
+@{
+    ViewData["Title"] = "Role List";
+    int count = 1;
+}
+
+<div>
+    <a asp-controller="Role" asp-action="Create" class="btn btn-outline-primary">Add New Role</a>
+</div>
+
+@await Html.PartialAsync("_ListAlert", Model)
+
+@if (Model is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Role Name</th>
+                <th scope="col">Role Description</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.RoleName</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <div class="btn-group">
+                            <a asp-controller="Role" asp-action="GetRoleDetail" asp-route-id="@item.Id" class="btn btn-primary">View</a>
+                        </div>
+                    </td>
+                </tr>
+                count++;
+            }
+        </tbody>
+    </table>
+}

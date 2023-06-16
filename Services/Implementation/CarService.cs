@@ -151,11 +151,13 @@ namespace CarRentals.Services.Implementation
             {
                 var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
                 var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                Expression<Func<Booking, bool>> expression = bk => bk.UserId == userIdClaim;
-
+                Expression<Func<Booking, bool>> expression = (bk => bk.UserId == userIdClaim);
                 var bookings = _unitOfWork.Bookings.GetAllBookings(expression);
 
-                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(u => bookings.Any(bk => bk.CarId == u.Id));
+                Expression<Func<Car, bool>> expression1 = (car => bookings.Any(booking => booking.CarId == car.Id));
+
+
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression1); 
 
                 if (cars.Count == 0)
                 {
@@ -196,7 +198,7 @@ namespace CarRentals.Services.Implementation
             }
 
             return response;
-        } 
+        }
         public CarsResponseModel DisplayCars()
         {
             var response = new CarsResponseModel();
@@ -213,7 +215,7 @@ namespace CarRentals.Services.Implementation
                 }
 
                 response.Data = cars
-                    .Where(q => q.IsDeleted == false && q.AailabilityStaus == true)
+                    .Where(q => q.IsDeleted == false)
                     .Select(car => new CarViewModel
                     {
                         Id = car.Id,
@@ -261,10 +263,10 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted &&  c.AailabilityStaus == true); 
-          
+            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted && c.AailabilityStaus == true);
 
-            if(car is null)
+
+            if (car is null)
             {
                 response.Message = "car not found!";
                 return response;
