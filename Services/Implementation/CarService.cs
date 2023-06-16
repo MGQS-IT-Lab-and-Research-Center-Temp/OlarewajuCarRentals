@@ -4,6 +4,7 @@ using CarRentals.Models.Car;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 
@@ -151,13 +152,11 @@ namespace CarRentals.Services.Implementation
             {
                 var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
                 var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                Expression<Func<Booking, bool>> expression = (bk => bk.UserId == userIdClaim);
-                var bookings = _unitOfWork.Bookings.GetAllBookings(expression);
 
-                Expression<Func<Car, bool>> expression1 = (car => bookings.Any(booking => booking.CarId == car.Id));
+                Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id);
 
 
-                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression1); 
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression); 
 
                 if (cars.Count == 0)
                 {

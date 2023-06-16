@@ -3,6 +3,7 @@ using CarRentals.Models;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Services.Interfaces;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using static CarRentals.Models.Comment.CommentResponse;
 
@@ -28,22 +29,22 @@ namespace CarRentals.Services.Implementation
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var LoggedInuser = _unitOfWork.Users.Get(userIdClaim);
-            var bookings = _unitOfWork.Bookings.GetAllBookings(bk => bk.CarId == request.CarId);
-            if(LoggedInuser is null)
+            if (LoggedInuser is null)
             {
                 response.Message = "User not found";
                 return response;
             }
 
             var car = _unitOfWork.Cars.Get(request.CarId);
-            var bookedCarUsers = _unitOfWork.Users.GetUsers(u => bookings.Any(bk => bk.UserId == u.Id));
 
+            Expression<Func<User, bool>> expression = user => user.Bookings.Where(bk => bk.CarId == request.CarId).Any(bk => bk.UserId == user.Id);
+            var bookedcarusers = _unitOfWork.Users.GetUsers(expression);
             if (car is null)
             {
                 response.Message = "car not found";
                 return response;
             }
-            if(!bookedCarUsers.Contains(LoggedInuser))
+            if (!bookedcarusers.Contains(LoggedInuser))
             {
                 response.Message = " You cannot comment on this car ";
                 return response;
@@ -170,7 +171,7 @@ namespace CarRentals.Services.Implementation
                 CommentText = comment.CommentText,
             };
 
-            return response; 
+            return response;
         }
 
         public BaseResponseModel UpdateComment(string commentId, UpdateCommentViewModel request)
