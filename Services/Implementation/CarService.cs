@@ -136,7 +136,7 @@ namespace CarRentals.Services.Implementation
 
                 Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id);
 
-                var cars = IsInRole ? _unitOfWork.Cars.GetCars(c=>c.IsDeleted == false) : _unitOfWork.Cars.GetCars(expression);
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression);
 
                 if (cars.Count == 0)
                 {
@@ -296,7 +296,7 @@ namespace CarRentals.Services.Implementation
                     return response;
                 }
 
-                response.Data = cars.Where(c=>c.IsDeleted )
+                response.Data = cars
                                     .Select(cc => new CarViewModel
                                     {
                                         Id = cc.Id,
