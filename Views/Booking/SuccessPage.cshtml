@@ -1,0 +1,39 @@
+﻿
+@model CarRentals.Models.Booking.BookingViewModel
+
+
+@await Html.PartialAsync("_Alert", Model)
+
+@if (Model is not null)
+{
+    <div class="body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-comment text-info"></i>
+                            @ViewData["Title"]
+                        </h3>
+                    </div>
+
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-md-4">UserName:</dt>
+                            <dd class="col-md-8">@Model.UserName</dd>
+                            <dt class="col-md-4">CarName:</dt>
+                            <dd class="col-md-8">@Model.CarName</dd>
+                            <dt class="col-md-4">Booking reference:</dt>
+                            <dd class="col-md-8">@Model.BookingReference</dd>
+                        </dl>
+
+                        <div class="btn-group">
+                            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Go back</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}

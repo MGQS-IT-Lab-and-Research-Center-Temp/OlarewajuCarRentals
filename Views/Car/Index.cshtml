@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CarRentals.Models.Car.CarViewModel>
+
+@{
+    ViewData["Title"] = "User Booked car List";
+}
+
+@await Html.PartialAsync("_ListAlert", Model)
+
+@if (Model is not null)
+{
+
+<div class="container">
+    <h3 class="display-4">All cars</h3>
+    <div class="row">
+
+        @foreach (var car in Model)
+        {
+            <div class="col-md-4">
+                <partial name="_carThumbnail" model="@car" />
+            </div>
+        }
+
+    </div>
+</div>
+}
+
+
+

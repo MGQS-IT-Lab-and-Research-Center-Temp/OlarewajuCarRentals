@@ -1,12 +1,9 @@
 ﻿using CarRentals.Entities;
 using CarRentals.Models;
 using CarRentals.Models.Booking;
-using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Services.Interfaces;
-using System.ComponentModel.Design;
 using System.Security.Claims;
-using static CarRentals.Models.Comment.CommentResponse;
 
 namespace CarRentals.Services.Implementation
 {
@@ -33,13 +30,21 @@ namespace CarRentals.Services.Implementation
                 response.Message = "User not found";
                 return response;
             }
-            var car = _unitOfWork.Cars.GetCar(c => c.Id == model.CarId && c.AailabilityStaus == true);
+            var car = _unitOfWork.Cars.GetCar(c => c.Id == model.CarId);
 
             if (car is null)
             {
                 response.Message = "car not found";
                 return response;
             }
+
+
+            if(car.AailabilityStaus is false)
+            {
+                response.Message = "car is unavailable";
+                return response;
+            }
+
             var booking = new Booking
             {
                 CarId = model.CarId,
@@ -52,16 +57,17 @@ namespace CarRentals.Services.Implementation
             };
             try
             {
+                car.AailabilityStaus = false;
                 _unitOfWork.Bookings.Create(booking);
                 _unitOfWork.SaveChanges();
                 response.Status = true;
-                response.Message = "Comment  created successfully.";
+                response.Message = "Car  Booked successfully.";
 
                 return response;
             }
             catch (Exception ex)
             {
-                response.Message = $"Failed to create comment . {ex.Message}";
+                response.Message = $"Failed to book car . {ex.Message}";
                 return response;
             }
         }

@@ -1,8 +1,34 @@
-﻿@{
+﻿@model List<CarRentals.Models.Car.CarViewModel>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@await Html.PartialAsync("_ListAlert", Model)
+
+@if (Model is not null)
+{
+
+    <div class="container">
+        <h3 class="display-4">All cars</h3>
+        <div class="row">
+
+            @foreach (var car in Model)
+            {
+                <div class="col-md-4">
+                    <partial name="_carThumbnail" model="@car" />
+                    <div class="btn-group">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a asp-controller="Car" asp-action="GetCarDetail" asp-route-id="@car.Id"
+                           class="btn btn-sm btn-outline-secondary">View details</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+}

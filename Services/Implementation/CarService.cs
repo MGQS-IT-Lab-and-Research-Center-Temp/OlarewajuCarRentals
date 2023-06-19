@@ -4,6 +4,8 @@ using CarRentals.Models.Car;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 
@@ -27,6 +29,12 @@ namespace CarRentals.Services.Implementation
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
+            var platenumexist = _unitOfWork.Cars.Exists(c => c.PlateNumber == createcarDto.PlateNumber);
+            if (platenumexist)
+            {
+                response.Message = "PlateNumber already exist already";
+                return response;
+            }
             if (createcarDto.CoverPhoto != null)
             {
                 string folder = "cars/cover/";
@@ -49,7 +57,6 @@ namespace CarRentals.Services.Implementation
                     createcarDto.Gallery.Add(gallery);
                 }
             }
-
             var newcar = new Car
             {
                 Name = createcarDto.Name,
@@ -61,7 +68,7 @@ namespace CarRentals.Services.Implementation
             };
             newcar.CarGalleries = new List<CarGallery>();
 
-            foreach (var file in newcar.CarGalleries)
+            foreach (var file in createcarDto.Gallery)
             {
                 newcar.CarGalleries.Add(new CarGallery()
                 {
@@ -131,7 +138,7 @@ namespace CarRentals.Services.Implementation
             {
                 _unitOfWork.Cars.Update(car);
                 _unitOfWork.SaveChanges();
-                response.Message = "Question deleted successfully!";
+                response.Message = "Car deleted successfully!";
                 response.Status = true;
 
                 return response;
@@ -149,10 +156,12 @@ namespace CarRentals.Services.Implementation
 
             try
             {
+                var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
                 var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-                
 
-                var cars = _unitOfWork.Cars.GetCars();
+                Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id && car.IsDeleted == false);
+
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression);
 
                 if (cars.Count == 0)
                 {
@@ -161,26 +170,51 @@ namespace CarRentals.Services.Implementation
                 }
 
                 response.Data = cars
-                    .Where(q => q.IsDeleted == false && q.AailabilityStaus == true)
+                    .Where(q => q.IsDeleted == false)
                     .Select(car => new CarViewModel
                     {
                         Id = car.Id,
                         Name = car.Name,
                         PlateNumber = car.PlateNumber,
                         CoverImageURL = car.CoverImageUrl,
-                        CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
-                        {
-                            Id = cg.Id,
-                            Name = cg.Name,
-                            URL = cg.URL
-                        }).ToList(),
-                        Comments = car.Comments
-                        .Select(comment => new CommentViewModel
-                        {
-                            Id = comment.Id,
-                            CommentText = comment.CommentText,
-                            UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
-                        }).ToList(),
+                        Price = car.Price,
+                    }).ToList();
+
+                response.Status = true;
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"An error occured: {ex.StackTrace}";
+                return response;
+            }
+
+            return response;
+        }
+        public CarsResponseModel DisplayCars()
+        {
+            var response = new CarsResponseModel();
+
+            try
+            {
+
+                var cars = _unitOfWork.Cars.GetCars(q => q.IsDeleted == false);
+
+                if (cars.Count == 0)
+                {
+                    response.Message = "No car found!";
+                    return response;
+                }
+
+                response.Data = cars
+                    .Where(q => q.IsDeleted == false)
+                    .Select(car => new CarViewModel
+                    {
+                        Id = car.Id,
+                        Name = car.Name,
+                        PlateNumber = car.PlateNumber,
+                        Price = car.Price,
+                        CoverImageURL = car.CoverImageUrl
                     }).ToList();
 
                 response.Status = true;
@@ -199,8 +233,7 @@ namespace CarRentals.Services.Implementation
         {
             var response = new CarResponseModel();
             var carExist = _unitOfWork.Cars.Exists(q => q.Id == carId && q.IsDeleted == false);
-            //var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
-            //var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+           
             var car = new Car();
 
             if (!carExist)
@@ -209,10 +242,10 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted &&  c.AailabilityStaus == true); 
-          
+            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted );
 
-            if(car is null)
+
+            if (car is null)
             {
                 response.Message = "car not found!";
                 return response;
@@ -225,6 +258,8 @@ namespace CarRentals.Services.Implementation
                 Id = car.Id,
                 Name = car.Name,
                 CoverImageURL = car.CoverImageUrl,
+                PlateNumber = car.PlateNumber,
+                Price = car.Price,
                 CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
                 {
                     Id = cg.Id,
@@ -245,70 +280,43 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BaseResponseModel Update(string carId, UpdateCarViewModel request)
+        public CarsResponseModel GetCarByCategoryId(string categoryId)
         {
-            var response = new BaseResponseModel();
-            var modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-            var carExist = _unitOfWork.Cars.Exists(c => c.Id == carId);
-            var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var user = _unitOfWork.Users.Get(userIdClaim);
-
-            if (!carExist)
-            {
-                response.Message = "car does not exist!";
-                return response;
-            }
-
-            var car = _unitOfWork.Cars.Get(carId);
-            car.Name = request.Name;
-            if (request.CoverPhoto != null)
-            {
-                string folder = "cars/cover/";
-                request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
-            }
-            car.CoverImageUrl = request.CoverImageUrl;
-            if (request.GalleryFiles != null)
-            {
-                string folder = "cars/gallery/";
-
-                request.Gallery = new List<CarGalleryModel>();
-
-                foreach (var file in request.GalleryFiles)
-                {
-                    var gallery = new CarGalleryModel()
-                    {
-                        Name = file.FileName,
-                        URL = UploadImage(folder, file)
-                    };
-                    request.Gallery.Add(gallery);
-                }
-            }
-            car.CarGalleries = new List<CarGallery>();
-
-            foreach (var file in car.CarGalleries)
-            {
-                car.CarGalleries.Add(new CarGallery()
-                {
-                    Name = file.Name,
-                    URL = file.URL
-                });
-            }
-            car.ModifiedBy = modifiedBy;
+            var response = new CarsResponseModel();
 
             try
             {
-                _unitOfWork.Cars.Update(car);
-                _unitOfWork.SaveChanges();
-                response.Message = "Car updated successfully!";
+                var cars = _unitOfWork.Cars.GetCarByCategoryId(categoryId);
+
+                if (cars.Count == 0)
+                {
+                    response.Message = "No car found!";
+                    return response;
+                }
+
+                response.Data = cars
+                                    .Select(cc => new CarViewModel
+                                    {
+                                        Id = cc.Id,
+                                        Name = cc.Car.Name,
+                                        PlateNumber = cc.Car.PlateNumber,
+                                        Price = cc.Car.Price,
+                                        CoverImageURL = cc.Car.CoverImageUrl
+                                    }).ToList();
+
                 response.Status = true;
-                return response;
+                response.Message = "Success";
             }
             catch (Exception ex)
             {
-                response.Message = $"Could not update the Question: {ex.Message}";
+                response.Message = $"An error occured: {ex.StackTrace}";
                 return response;
             }
+
+            return response;
         }
+
+      
         private string UploadImage(string folderPath, IFormFile file)
         {
 
@@ -320,5 +328,6 @@ namespace CarRentals.Services.Implementation
 
             return "/" + folderPath;
         }
+
     }
 }

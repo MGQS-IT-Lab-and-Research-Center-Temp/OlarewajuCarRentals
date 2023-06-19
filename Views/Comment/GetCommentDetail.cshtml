@@ -1,0 +1,35 @@
+﻿@model CarRentals.Models.Comment.CommentViewModel
+
+@{
+    ViewData["Title"] = "Comment Detail";
+}
+
+<div class="body">
+
+    @if (Model is not null)
+    {
+        <div class="card">
+
+            <div class="card-header">
+                <h5>
+                    <span class="text-danger">Comment:</span>
+                    @Model.CommentText
+                </h5>
+
+                @if(User.IsInRole("Admin"))
+                {
+                    <form asp-controller="Comment" asp-action="DeleteComment" asp-route-id="@Model.Id" method="post" style="display:inline-block">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                }
+            </div>
+
+            <div class="card-body">
+                <a asp-controller="Question" asp-action="Index" class="btn btn-secondary">Back to list</a>
+
+            </div>
+        </div>
+    }
+</div>

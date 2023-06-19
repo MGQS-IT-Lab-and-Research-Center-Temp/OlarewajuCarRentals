@@ -16,10 +16,22 @@ namespace CarRentals.Repository.Implementation
 
         public Car GetCar(Expression<Func<Car, bool>> expression)
         {
-            var car = _context.Cars.Include(c => c.Comments)
-                                          .ThenInclude(c => c.User)
+            var car = _context.Cars
+                                         .Include(c => c.Comments)
+                                         .ThenInclude(c => c.User)
                                           .Include(c => c.CarGalleries)
                                           .SingleOrDefault(expression);
+            return car;
+        }
+
+        public List<CarCategory> GetCarByCategoryId(string categoryId)
+        {
+            var car = _context.CarCategories
+                           .Include(c => c.Category)
+                           .Include(c => c.Car)
+                           .Where(c => c.CategoryId.Equals(categoryId))
+                           .ToList();
+
             return car;
         }
 
@@ -27,6 +39,7 @@ namespace CarRentals.Repository.Implementation
         {
             var cars = _context.Cars
                .Include(uq => uq.CarGalleries)
+               .Include(c => c.Bookings)
                .Include(c => c.Comments)
                .ThenInclude(u => u.User)
                .ToList();
@@ -38,6 +51,8 @@ namespace CarRentals.Repository.Implementation
         {
             var cars = _context.Cars
                           .Where(expression)
+                          .Include(c => c.Bookings)
+                          .ThenInclude(bk => bk.User)
                           .Include(u => u.CarGalleries)
                           .Include(c => c.Comments)
                           .ThenInclude(u => u.User)
