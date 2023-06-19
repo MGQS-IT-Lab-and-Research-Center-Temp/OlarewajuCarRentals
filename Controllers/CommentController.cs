@@ -16,14 +16,6 @@ namespace CarRentals.Controllers
             _notyf = notyf;
         }
 
-        //public IActionResult Index()
-        //{
-        //    var response = _commentService.GetAllComment();
-        //    ViewData["Message"] = response.Message;
-        //    ViewData["Status"] = response.Status;
-
-        //    return View(response.Data);
-        //}
 
         public IActionResult GetCommentDetail(string id)
         {
@@ -51,7 +43,7 @@ namespace CarRentals.Controllers
             if (response.Status is false)
             {
                 _notyf.Error(response.Message);
-                return View();
+                return RedirectToAction("Index", "Home");
             }
 
             _notyf.Success(response.Message);

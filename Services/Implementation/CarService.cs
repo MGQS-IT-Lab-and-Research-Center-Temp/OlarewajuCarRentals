@@ -29,9 +29,12 @@ namespace CarRentals.Services.Implementation
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-
-
-
+            var platenumexist = _unitOfWork.Cars.Exists(c => c.PlateNumber == createcarDto.PlateNumber);
+            if (platenumexist)
+            {
+                response.Message = "PlateNumber already exist already";
+                return response;
+            }
             var newcar = new Car
             {
                 Name = createcarDto.Name,
@@ -134,7 +137,7 @@ namespace CarRentals.Services.Implementation
                 var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
                 var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-                Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id);
+                Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id && car.IsDeleted == false);
 
                 var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression);
 

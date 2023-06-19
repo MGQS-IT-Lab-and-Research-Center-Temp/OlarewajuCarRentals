@@ -22,39 +22,11 @@
                             <div class="btn-group">
                                 <a asp-controller="Car" asp-action="GetCarDetail" asp-route-id="@car.Id"
                            class="btn btn-sm btn-outline-secondary">View details</a>
-                                <a asp-controller="Booking" asp-action="BookCar" asp-route-id="@car.Id"
-                           class="btn btn-sm btn-outline-secondary">Book Car</a>
-                                <a asp-controller="Comment" asp-action="Create" asp-route-id="@car.Id" class="btn btn-success btn-sm">
-                                    Add Comment
-                                </a>
                             </div>
                         </div>
                     </div>
-                 
+
                 </div>
-                @if (car.Comments.Count == 0)
-                {
-                    <p>Be the first to comment on this</p>
-                }
-
-                @if (car.Comments.Count != 0)
-                {
-                    <div class="card mt-3 mb-3">
-                        <div class="card-header bg-light">
-                            Comments:
-                        </div>
-                        <ul class="list-group list-group-flush">
-
-                            @foreach (var comment in car.Comments)
-                            {
-                                <li class="list-group-item">
-                                    @comment.CommentText
-                                    <span class="badge bg-secondary">@comment.UserName</span>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                }
             }
 
         </div>

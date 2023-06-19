@@ -30,7 +30,7 @@ namespace CarRentals.Services.Implementation
                 response.Message = "User not found";
                 return response;
             }
-            var car = _unitOfWork.Cars.GetCar(c => c.Id == model.CarId && c.AailabilityStaus == true);
+            var car = _unitOfWork.Cars.GetCar(c => c.Id == model.CarId);
 
             if (car is null)
             {
@@ -41,7 +41,7 @@ namespace CarRentals.Services.Implementation
 
             if(car.AailabilityStaus is false)
             {
-                response.Message = "car is unavailable6";
+                response.Message = "car is unavailable";
                 return response;
             }
 
@@ -61,13 +61,13 @@ namespace CarRentals.Services.Implementation
                 _unitOfWork.Bookings.Create(booking);
                 _unitOfWork.SaveChanges();
                 response.Status = true;
-                response.Message = "Comment  created successfully.";
+                response.Message = "Car  created successfully.";
 
                 return response;
             }
             catch (Exception ex)
             {
-                response.Message = $"Failed to create comment . {ex.Message}";
+                response.Message = $"Failed to create car . {ex.Message}";
                 return response;
             }
         }
