@@ -35,6 +35,28 @@ namespace CarRentals.Services.Implementation
                 response.Message = "PlateNumber already exist already";
                 return response;
             }
+            if (createcarDto.CoverPhoto != null)
+            {
+                string folder = "cars/cover/";
+                createcarDto.CoverImageUrl = UploadImage(folder, createcarDto.CoverPhoto);
+            }
+
+            if (createcarDto.GalleryFiles != null)
+            {
+                string folder = "cars/gallery/";
+
+                createcarDto.Gallery = new List<CarGalleryModel>();
+
+                foreach (var file in createcarDto.GalleryFiles)
+                {
+                    var gallery = new CarGalleryModel()
+                    {
+                        Name = file.FileName,
+                        URL = UploadImage(folder, file)
+                    };
+                    createcarDto.Gallery.Add(gallery);
+                }
+            }
             var newcar = new Car
             {
                 Name = createcarDto.Name,
@@ -156,19 +178,6 @@ namespace CarRentals.Services.Implementation
                         PlateNumber = car.PlateNumber,
                         CoverImageURL = car.CoverImageUrl,
                         Price = car.Price,
-                        CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
-                        {
-                            Id = cg.Id,
-                            Name = cg.Name,
-                            URL = cg.URL
-                        }).ToList(),
-                        Comments = car.Comments
-                        .Select(comment => new CommentViewModel
-                        {
-                            Id = comment.Id,
-                            CommentText = comment.CommentText,
-                            UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
-                        }).ToList(),
                     }).ToList();
 
                 response.Status = true;
@@ -205,20 +214,7 @@ namespace CarRentals.Services.Implementation
                         Name = car.Name,
                         PlateNumber = car.PlateNumber,
                         Price = car.Price,
-                        CoverImageURL = car.CoverImageUrl,
-                        CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
-                        {
-                            Id = cg.Id,
-                            Name = cg.Name,
-                            URL = cg.URL
-                        }).ToList(),
-                        Comments = car.Comments.Where(q => q.IsDeleted == false)
-                        .Select(comment => new CommentViewModel
-                        {
-                            Id = comment.Id,
-                            CommentText = comment.CommentText,
-                            UserName = $"{comment.User.FirstName}  {comment.User.LastName}",
-                        }).ToList(),
+                        CoverImageURL = car.CoverImageUrl
                     }).ToList();
 
                 response.Status = true;
@@ -237,8 +233,7 @@ namespace CarRentals.Services.Implementation
         {
             var response = new CarResponseModel();
             var carExist = _unitOfWork.Cars.Exists(q => q.Id == carId && q.IsDeleted == false);
-            //var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
-            //var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+           
             var car = new Car();
 
             if (!carExist)
@@ -321,69 +316,17 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BaseResponseModel Update(string carId, UpdateCarViewModel request)
+      
+        private string UploadImage(string folderPath, IFormFile file)
         {
-            var response = new BaseResponseModel();
-            var modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-            var carExist = _unitOfWork.Cars.Exists(c => c.Id == carId);
-            var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var user = _unitOfWork.Users.Get(userIdClaim);
 
-            if (!carExist)
-            {
-                response.Message = "car does not exist!";
-                return response;
-            }
+            folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
 
-            var car = _unitOfWork.Cars.Get(carId);
-            car.Name = request.Name;
-            //if (request.CoverPhoto != null)
-            //{
-            //    string folder = "cars/cover/";
-            //    request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
-            //}
-            //car.CoverImageUrl = request.CoverImageUrl;
-            //if (request.GalleryFiles != null)
-            //{
-            //    string folder = "cars/gallery/";
+            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
 
-            //    request.Gallery = new List<CarGalleryModel>();
+            file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
 
-            //    foreach (var file in request.GalleryFiles)
-            //    {
-            //        var gallery = new CarGalleryModel()
-            //        {
-            //            Name = file.FileName,
-            //            URL = UploadImage(folder, file)
-            //        };
-            //        request.Gallery.Add(gallery);
-            //    }
-            //}
-            //car.CarGalleries = new List<CarGallery>();
-
-            //foreach (var file in car.CarGalleries)
-            //{
-            //    car.CarGalleries.Add(new CarGallery()
-            //    {
-            //        Name = file.Name,
-            //        URL = file.URL
-            //    });
-            //}
-            car.ModifiedBy = modifiedBy;
-
-            try
-            {
-                _unitOfWork.Cars.Update(car);
-                _unitOfWork.SaveChanges();
-                response.Message = "Car updated successfully!";
-                response.Status = true;
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response.Message = $"Could not update the Question: {ex.Message}";
-                return response;
-            }
+            return "/" + folderPath;
         }
 
     }

@@ -15,6 +15,14 @@ namespace CarRentals.Controllers
             _bookingService = bookingService;
             _notyf = notyf;
         }
+        public IActionResult Index()
+        {
+            var cars = _bookingService.GetBookings();
+            ViewData["Message"] = cars.Message;
+            ViewData["Status"] = cars.Status;
+
+            return View(cars.Data);
+        }
         [HttpGet]
         public IActionResult BookCar()
         {
@@ -36,22 +44,18 @@ namespace CarRentals.Controllers
 
             _notyf.Success(response.Message);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
 
-        //public IActionResult SuccessPage(string id)
-        //{
-        //    var booking = _bookingService.GetBooking(id);
-        //    if (booking == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    else
-        //    {
-        //        return View(booking.Data);
-        //    }
+        public IActionResult SuccessPage(string id)
+        {
+            var booking = _bookingService.GetBooking(id);
+            ViewData["Message"] = booking.Message;
+            ViewData["Status"] = booking.Status;
 
-        //}
+            return View(booking.Data);
+
+        }
     }
 }

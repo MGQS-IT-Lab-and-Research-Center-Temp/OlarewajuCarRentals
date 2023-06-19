@@ -57,28 +57,7 @@ namespace CarRentals.Controllers
         [HttpPost]
         public IActionResult Create(CreateCarViewModel request)
         {
-            if (request.CoverPhoto != null)
-            {
-                string folder = "cars/cover/";
-                request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
-            }
-
-            if (request.GalleryFiles != null)
-            {
-                string folder = "cars/gallery/";
-
-                request.Gallery = new List<CarGalleryModel>();
-
-                foreach (var file in request.GalleryFiles)
-                {
-                    var gallery = new CarGalleryModel()
-                    {
-                        Name = file.FileName,
-                        URL = UploadImage(folder, file)
-                    };
-                    request.Gallery.Add(gallery);
-                }
-            }
+          
             var response = _carService.Create(request);
 
             if (response.Status is false)
@@ -110,29 +89,7 @@ namespace CarRentals.Controllers
             return View(response.Data);
         }
 
-        public IActionResult Update(string id)
-        {
-            var response = _carService.GetCar(id);
-
-            return View(response.Data);
-        }
-
-        [HttpPost]
-        public IActionResult Update(string id, UpdateCarViewModel request)
-        {
-            var response = _carService.Update(id, request);
-
-            if (response.Status is false)
-            {
-                _notyf.Error(response.Message);
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            _notyf.Success(response.Message);
-
-            return RedirectToAction("Index", "Question");
-        }
+      
 
         [HttpPost]
         public IActionResult DeleteCar([FromRoute] string id)
@@ -149,17 +106,7 @@ namespace CarRentals.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        private string UploadImage(string folderPath, IFormFile file)
-        {
-
-            folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
-
-            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
-
-            file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
-
-            return "/" + folderPath;
-        }
+       
 
     }
 }

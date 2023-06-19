@@ -2,82 +2,38 @@
 @model CarRentals.Models.Booking.BookingViewModel
 
 
+@await Html.PartialAsync("_Alert", Model)
 
-<div class="content d-flex flex-column flex-column-fluid " id="kt_content">
-    <!--begin::Entry-->
-    <div class="d-flex flex-column-fluid">
-        <!--begin::Container-->
-        <div class="container">
-            <div class="card card-custom overflow-hidden" style="background-color:coral">
-                <div class="card-body invoice-6 p-0 ">
-                    <!--begin::Invoice-->
-                    <div class="invoice-6-container bgi-size-contain bgi-no-repeat bgi-position-y-top bgi-position-x-center" style="background-image: url(assets/media/svg/shapes/abstract-10.svg);">
-                        <div class="container">
-                            <div class="row justify-content-center py-8 px-8 py-md-27 px-md-0">
-                                <div class="col-md-9">
-                                    <!--begin::Invoice header-->
-                                    <div class="d-flex justify-content-between align-items-center flex-column flex-md-row mb-40">
-                                        <h1 class="display-3 font-weight-boldest text-white mb-5 mb-md-0">INVOICE</h1>
-                                        <div class="d-flex flex-column px-0 text-right">
-                                            <span class="d-flex flex-column font-size-h5 font-weight-bold text-white align-items-center align-items-md-end">
-                                                <span class="mb-2">Reciept # @Model.BookingReference</span>
-                                                <span>@DateTime.Now.ToLongDateString()</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <!--end::Invoice header-->
-                                    <!--begin::Invoice body-->
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr class="font-weight-boldest title-color">
-                                                    <td class="align-middle font-size-h4 pl-0 border-0 pb-10">DESCRIPTION</td>
+@if (Model is not null)
+{
+    <div class="body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-comment text-info"></i>
+                            @ViewData["Title"]
+                        </h3>
+                    </div>
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="font-size-h5 font-weight-bolder text-white">
-                                                    <td class="align-middle pl-0 border-0 py-4">Name</td>
-                                                    <td class="align-middle font-size-lg text-right border-0 py-4">@Model.UserName</td>
-                                                    <td class="align-middle font-size-lg text-right border-0 py-4"></td>
-                                                    <td class="align-middle text-right text-primary font-weight-boldest font-size-h5 pr-0 border-0 py-4">@Model.CarName</td>
-                                                </tr>
-                                                <tr class="font-size-h5 font-weight-bolder text-white">
-                                                    <td class="align-middle pl-0 border-0 py-4">Booking Time</td>
-                                                    <td class="align-middle font-size-lg text-right border-0 py-4">@Model.BookedTime</td>
-                                                    <td class="align-middle font-size-lg text-right border-0 py-4"></td>
-                                                    <td class="align-middle text-right border-0 text-primary font-weight-boldest font-size-h5 pr-0 py-4">@Model.ReturnTime</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="border-bottom w-100 my-13 opacity-15"></div>
-                                   
-                                    <div class="d-flex justify-content-between flex-column flex-sm-row text-center text-sm-left mt-30">
-                                        <div class="font-size-h2 font-weight-bolder text-white">Thanks For Your Booking</div>
-                                        <!--begin::Logo-->
-                                        <a href="#" class="max-w-150px mx-auto mx-sm-0 mt-5 mt-sm-0">
-                                            <span class="svg-icon svg-icon-full svg-logo-white">
-                                                <a asp-area="" asp-controller="Home" asp-action="Index">Back to Home page</a>
-                                                <!--end::Svg Icon-->
-                                            </span>
-                                        </a>
-                                        <!--end::Logo-->
-                                    </div>
-                                    <!--end::Invoice footer-->
-                                </div>
-                            </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-md-4">UserName:</dt>
+                            <dd class="col-md-8">@Model.UserName</dd>
+                            <dt class="col-md-4">CarName:</dt>
+                            <dd class="col-md-8">@Model.CarName</dd>
+                            <dt class="col-md-4">Booking reference:</dt>
+                            <dd class="col-md-8">@Model.BookingReference</dd>
+                        </dl>
+
+                        <div class="btn-group">
+                            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Go back</a>
                         </div>
                     </div>
-                    <!--end::Invoice-->
+
                 </div>
             </div>
         </div>
-        <!--end::Container-->
     </div>
-    <!--end::Entry-->
-</div>
-
-
-
-<br>
+}

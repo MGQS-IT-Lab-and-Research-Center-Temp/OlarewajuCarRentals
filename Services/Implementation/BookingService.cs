@@ -61,13 +61,13 @@ namespace CarRentals.Services.Implementation
                 _unitOfWork.Bookings.Create(booking);
                 _unitOfWork.SaveChanges();
                 response.Status = true;
-                response.Message = "Car  created successfully.";
+                response.Message = "Car  Booked successfully.";
 
                 return response;
             }
             catch (Exception ex)
             {
-                response.Message = $"Failed to create car . {ex.Message}";
+                response.Message = $"Failed to book car . {ex.Message}";
                 return response;
             }
         }
