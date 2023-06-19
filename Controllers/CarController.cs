@@ -1,8 +1,10 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CarRentals.Models;
 using CarRentals.Models.Car;
 using CarRentals.Service.Interface;
 using CarRentals.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,18 +17,23 @@ namespace CarRentals.Controllers
         private readonly ICarService _carService;
         private readonly ICategoryService _categoryService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly INotyfService _notyf;
+
 
         public CarController(
             ICarService carService,
             ICategoryService categoryService,
             IHttpContextAccessor httpContextAccessor,
-            INotyfService notyf)
+            INotyfService notyf
+,
+            IWebHostEnvironment webHostEnvironment)
         {
             _carService = carService;
             _categoryService = categoryService;
             _httpContextAccessor = httpContextAccessor;
             _notyf = notyf;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -50,6 +57,28 @@ namespace CarRentals.Controllers
         [HttpPost]
         public IActionResult Create(CreateCarViewModel request)
         {
+            if (request.CoverPhoto != null)
+            {
+                string folder = "cars/cover/";
+                request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
+            }
+
+            if (request.GalleryFiles != null)
+            {
+                string folder = "cars/gallery/";
+
+                request.Gallery = new List<CarGalleryModel>();
+
+                foreach (var file in request.GalleryFiles)
+                {
+                    var gallery = new CarGalleryModel()
+                    {
+                        Name = file.FileName,
+                        URL = UploadImage(folder, file)
+                    };
+                    request.Gallery.Add(gallery);
+                }
+            }
             var response = _carService.Create(request);
 
             if (response.Status is false)
@@ -63,8 +92,15 @@ namespace CarRentals.Controllers
             return RedirectToAction("Index", "Car");
         }
 
-      
 
+        public IActionResult GetCarByCategory(string id)
+        {
+            var response = _carService.GetCarByCategoryId(id);
+            ViewData["Message"] = response.Message;
+            ViewData["Status"] = response.Status;
+
+            return View(response.Data);
+        }
         public IActionResult GetCarDetail(string id)
         {
             var response = _carService.GetCar(id);
@@ -111,7 +147,19 @@ namespace CarRentals.Controllers
 
             _notyf.Success(response.Message);
 
-            return RedirectToAction("Index", "Question");
+            return RedirectToAction("Index", "Home");
         }
+        private string UploadImage(string folderPath, IFormFile file)
+        {
+
+            folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
+
+            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
+
+            file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
+
+            return "/" + folderPath;
+        }
+
     }
 }

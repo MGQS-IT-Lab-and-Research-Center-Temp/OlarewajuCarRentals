@@ -20,6 +20,9 @@
 
                         @if (User.IsInRole("Admin"))
                         {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Car" asp-action="Create">Create Car  </a>
+                        </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Manage Role</a>
                             </li>
@@ -41,7 +44,8 @@
                                     <i class="fas fa-user"></i>
                                     My Booked Cars
                                 </a>
-                            </li>
+                            </li> 
+                           
                         }
                     }
                 </ul>

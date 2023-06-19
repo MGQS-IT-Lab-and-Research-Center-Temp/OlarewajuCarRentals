@@ -8,7 +8,7 @@
     },
     {
       "library": "twitter-bootstrap@5.3.0",
-      "destination": "wwwroot/lib/twitter-bootstrap/"
+      "destination": "wwwroot/twitter-bootstrap/"
     }
   ]
 }

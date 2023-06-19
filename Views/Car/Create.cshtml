@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <form asp-action="Create">
+            <form asp-action="Create" enctype="multipart/form-data">
                 <div class="col-md-12 mb-2">
                     <label class="form-label">Categories:</label>
                     <select asp-for="CategoryIds" class="form-control" asp-items="@ViewBag.Categories" data-placeholder="Select Categories" multiple>
@@ -40,19 +40,13 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="CoverPhoto" class="control-label"></label>
-                    <div class="custom-file">
-                        <input asp-for="CoverPhoto" class="custom-file-input" id="customFile">
-                        <label class="custom-file-label" for="customFile">Choose file</label>
-                    </div>
+                    <input asp-for="CoverPhoto" class="form-control form-control-sm" id="formFileSm" type="file">
                     <span asp-validation-for="CoverPhoto" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="GalleryFiles" class="control-label"></label>
-                    <div class="custom-file">
-                        <input asp-for="GalleryFiles" class="custom-file-input" id="customFile">
-                        <label class="custom-file-label" for="customFile">Choose file</label>
-                    </div>
+                    <input asp-for= "GalleryFiles" class="form-control" type="file" id="formFileMultiple" multiple>                   
                     <span asp-validation-for="GalleryFiles" class="text-danger"></span>
                 </div>
                 <div class="col-md-12">

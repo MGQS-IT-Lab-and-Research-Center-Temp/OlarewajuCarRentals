@@ -36,22 +36,22 @@ namespace CarRentals.Controllers
 
             _notyf.Success(response.Message);
 
-            return RedirectToAction("SuccessPage");
+            return RedirectToAction("Index", "Home");
         }
 
 
-        public IActionResult SuccessPage(string bookingReference)
-        {
-            var booking = _bookingService.GetByReference(bookingReference);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return View(booking.Data);
-            }
+        //public IActionResult SuccessPage(string id)
+        //{
+        //    var booking = _bookingService.GetBooking(id);
+        //    if (booking == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    else
+        //    {
+        //        return View(booking.Data);
+        //    }
 
-        }
+        //}
     }
 }

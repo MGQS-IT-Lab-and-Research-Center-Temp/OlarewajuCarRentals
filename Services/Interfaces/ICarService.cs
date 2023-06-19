@@ -10,6 +10,7 @@ namespace CarRentals.Service.Interface
         BaseResponseModel Delete(string carId);
         BaseResponseModel Update(string carId, UpdateCarViewModel request);
         CarResponseModel GetCar(string carId);
+        CarsResponseModel GetCarByCategoryId(string categoryId);
         CarsResponseModel GetAllCar();
     }
 }

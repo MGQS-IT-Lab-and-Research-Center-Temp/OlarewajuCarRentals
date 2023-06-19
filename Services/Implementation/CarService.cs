@@ -4,6 +4,7 @@ using CarRentals.Models.Car;
 using CarRentals.Models.Comment;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Service.Interface;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -28,28 +29,8 @@ namespace CarRentals.Services.Implementation
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (createcarDto.CoverPhoto != null)
-            {
-                string folder = "cars/cover/";
-                createcarDto.CoverImageUrl = UploadImage(folder, createcarDto.CoverPhoto);
-            }
 
-            if (createcarDto.GalleryFiles != null)
-            {
-                string folder = "cars/gallery/";
 
-                createcarDto.Gallery = new List<CarGalleryModel>();
-
-                foreach (var file in createcarDto.GalleryFiles)
-                {
-                    var gallery = new CarGalleryModel()
-                    {
-                        Name = file.FileName,
-                        URL = UploadImage(folder, file)
-                    };
-                    createcarDto.Gallery.Add(gallery);
-                }
-            }
 
             var newcar = new Car
             {
@@ -62,7 +43,7 @@ namespace CarRentals.Services.Implementation
             };
             newcar.CarGalleries = new List<CarGallery>();
 
-            foreach (var file in newcar.CarGalleries)
+            foreach (var file in createcarDto.Gallery)
             {
                 newcar.CarGalleries.Add(new CarGallery()
                 {
@@ -132,7 +113,7 @@ namespace CarRentals.Services.Implementation
             {
                 _unitOfWork.Cars.Update(car);
                 _unitOfWork.SaveChanges();
-                response.Message = "Question deleted successfully!";
+                response.Message = "Car deleted successfully!";
                 response.Status = true;
 
                 return response;
@@ -155,8 +136,7 @@ namespace CarRentals.Services.Implementation
 
                 Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id);
 
-
-                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression); 
+                var cars = IsInRole ? _unitOfWork.Cars.GetCars(c=>c.IsDeleted == false) : _unitOfWork.Cars.GetCars(expression);
 
                 if (cars.Count == 0)
                 {
@@ -165,13 +145,14 @@ namespace CarRentals.Services.Implementation
                 }
 
                 response.Data = cars
-                    .Where(q => q.IsDeleted == false && q.AailabilityStaus == true)
+                    .Where(q => q.IsDeleted == false)
                     .Select(car => new CarViewModel
                     {
                         Id = car.Id,
                         Name = car.Name,
                         PlateNumber = car.PlateNumber,
                         CoverImageURL = car.CoverImageUrl,
+                        Price = car.Price,
                         CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
                         {
                             Id = cg.Id,
@@ -205,7 +186,7 @@ namespace CarRentals.Services.Implementation
             try
             {
 
-                var cars = _unitOfWork.Cars.GetCars();
+                var cars = _unitOfWork.Cars.GetCars(q => q.IsDeleted == false);
 
                 if (cars.Count == 0)
                 {
@@ -220,6 +201,7 @@ namespace CarRentals.Services.Implementation
                         Id = car.Id,
                         Name = car.Name,
                         PlateNumber = car.PlateNumber,
+                        Price = car.Price,
                         CoverImageURL = car.CoverImageUrl,
                         CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
                         {
@@ -227,7 +209,7 @@ namespace CarRentals.Services.Implementation
                             Name = cg.Name,
                             URL = cg.URL
                         }).ToList(),
-                        Comments = car.Comments
+                        Comments = car.Comments.Where(q => q.IsDeleted == false)
                         .Select(comment => new CommentViewModel
                         {
                             Id = comment.Id,
@@ -262,7 +244,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted && c.AailabilityStaus == true);
+            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted );
 
 
             if (car is null)
@@ -278,6 +260,8 @@ namespace CarRentals.Services.Implementation
                 Id = car.Id,
                 Name = car.Name,
                 CoverImageURL = car.CoverImageUrl,
+                PlateNumber = car.PlateNumber,
+                Price = car.Price,
                 CarGalleries = car.CarGalleries.Select(cg => new CarGalleryModel()
                 {
                     Id = cg.Id,
@@ -298,6 +282,42 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
+        public CarsResponseModel GetCarByCategoryId(string categoryId)
+        {
+            var response = new CarsResponseModel();
+
+            try
+            {
+                var cars = _unitOfWork.Cars.GetCarByCategoryId(categoryId);
+
+                if (cars.Count == 0)
+                {
+                    response.Message = "No car found!";
+                    return response;
+                }
+
+                response.Data = cars.Where(c=>c.IsDeleted )
+                                    .Select(cc => new CarViewModel
+                                    {
+                                        Id = cc.Id,
+                                        Name = cc.Car.Name,
+                                        PlateNumber = cc.Car.PlateNumber,
+                                        Price = cc.Car.Price,
+                                        CoverImageURL = cc.Car.CoverImageUrl
+                                    }).ToList();
+
+                response.Status = true;
+                response.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"An error occured: {ex.StackTrace}";
+                return response;
+            }
+
+            return response;
+        }
+
         public BaseResponseModel Update(string carId, UpdateCarViewModel request)
         {
             var response = new BaseResponseModel();
@@ -314,38 +334,38 @@ namespace CarRentals.Services.Implementation
 
             var car = _unitOfWork.Cars.Get(carId);
             car.Name = request.Name;
-            if (request.CoverPhoto != null)
-            {
-                string folder = "cars/cover/";
-                request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
-            }
-            car.CoverImageUrl = request.CoverImageUrl;
-            if (request.GalleryFiles != null)
-            {
-                string folder = "cars/gallery/";
+            //if (request.CoverPhoto != null)
+            //{
+            //    string folder = "cars/cover/";
+            //    request.CoverImageUrl = UploadImage(folder, request.CoverPhoto);
+            //}
+            //car.CoverImageUrl = request.CoverImageUrl;
+            //if (request.GalleryFiles != null)
+            //{
+            //    string folder = "cars/gallery/";
 
-                request.Gallery = new List<CarGalleryModel>();
+            //    request.Gallery = new List<CarGalleryModel>();
 
-                foreach (var file in request.GalleryFiles)
-                {
-                    var gallery = new CarGalleryModel()
-                    {
-                        Name = file.FileName,
-                        URL = UploadImage(folder, file)
-                    };
-                    request.Gallery.Add(gallery);
-                }
-            }
-            car.CarGalleries = new List<CarGallery>();
+            //    foreach (var file in request.GalleryFiles)
+            //    {
+            //        var gallery = new CarGalleryModel()
+            //        {
+            //            Name = file.FileName,
+            //            URL = UploadImage(folder, file)
+            //        };
+            //        request.Gallery.Add(gallery);
+            //    }
+            //}
+            //car.CarGalleries = new List<CarGallery>();
 
-            foreach (var file in car.CarGalleries)
-            {
-                car.CarGalleries.Add(new CarGallery()
-                {
-                    Name = file.Name,
-                    URL = file.URL
-                });
-            }
+            //foreach (var file in car.CarGalleries)
+            //{
+            //    car.CarGalleries.Add(new CarGallery()
+            //    {
+            //        Name = file.Name,
+            //        URL = file.URL
+            //    });
+            //}
             car.ModifiedBy = modifiedBy;
 
             try
@@ -362,16 +382,6 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
         }
-        private string UploadImage(string folderPath, IFormFile file)
-        {
 
-            folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
-
-            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
-
-            file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
-
-            return "/" + folderPath;
-        }
     }
 }

@@ -29,6 +29,8 @@ namespace CarRentals.Services.Implementation
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var LoggedInuser = _unitOfWork.Users.Get(userIdClaim);
+
+
             if (LoggedInuser is null)
             {
                 response.Message = "User not found";
@@ -44,17 +46,17 @@ namespace CarRentals.Services.Implementation
                 response.Message = "car not found";
                 return response;
             }
-            if (!bookedcarusers.Contains(LoggedInuser))
-            {
-                response.Message = " You cannot comment on this car ";
-                return response;
-            }
+        
             if (string.IsNullOrWhiteSpace(request.CommentText))
             {
                 response.Message = "Comment text is required!";
                 return response;
             }
-
+            if (!bookedcarusers.Contains(LoggedInuser))
+            {
+                response.Message = " You cannot comment on this car ";
+                return response;
+            }
             var comment = new Comment
             {
                 UserId = LoggedInuser.Id,
@@ -85,6 +87,7 @@ namespace CarRentals.Services.Implementation
         {
             var response = new BaseResponseModel();
             var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var user = _unitOfWork.Users.Get(userIdClaim);
 
@@ -95,7 +98,7 @@ namespace CarRentals.Services.Implementation
             }
 
             var comment = _unitOfWork.Comments.Get(commentId);
-            if (comment.UserId != user.Id)
+            if (comment.UserId != user.Id && !IsInRole)
             {
                 response.Message = "You can not delete this Comment!";
                 return response;
