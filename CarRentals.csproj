@@ -6,13 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\twitter-bootstrap\scss\**" />
-    <Content Remove="wwwroot\twitter-bootstrap\scss\**" />
-    <EmbeddedResource Remove="wwwroot\twitter-bootstrap\scss\**" />
-    <None Remove="wwwroot\twitter-bootstrap\scss\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.16">
