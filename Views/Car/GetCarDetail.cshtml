@@ -98,9 +98,6 @@
         <div class="col-md-12">
             @if (User.IsInRole("Admin"))
             {
-                <a asp-controller="Car" asp-action="Update" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
-                    Update car
-                </a>
 
                 <form asp-controller="Car" asp-action="DeleteCar" asp-route-id="@Model.Id" method="post" class="del-btn">
                     <button type="submit" class="btn btn-danger btn-sm">

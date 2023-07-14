@@ -35,7 +35,7 @@ namespace CarRentals.Controllers
             _notyf = notyf;
             _webHostEnvironment = webHostEnvironment;
         }
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var cars = _carService.GetAllCar();
@@ -80,6 +80,7 @@ namespace CarRentals.Controllers
 
             return View(response.Data);
         }
+        [AllowAnonymous]
         public IActionResult GetCarDetail(string id)
         {
             var response = _carService.GetCar(id);

@@ -3,35 +3,32 @@
     ViewData["Title"] = "Write Comment";
     var carId = ViewContext.RouteData.Values["id"];
 }
-<div class="login-register-area pt-75 pb-75">
-    <div class="container">
-        <div class="login-register-wrap">
-            <div class="login-register-title text-center">
-                <h1></h1>
-            </div>
-            <div class="login-register-form">
-                <form asp-action="BookCar">
-                    <input type="hidden" name="CarId" value="@carId" />
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="login-register-input-style input-style">
-                                <label asp-for="BookedTime">BookedTime* </label>
-                                <input asp-for="BookedTime" name="BookedTime" required>
-                            </div>
-                            <div class="login-register-input-style input-style">
-                               <label asp-for="ReturnTime">ReturnTime * </label>
-                                <input asp-for="ReturnTime" name="BookedTime" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="login-register-btn">
-                                <button type="submit">Register</button>
-                            </div>
-                        </div>
-                    </div>
 
-                </form>
-            </div>
+
+<div class="body">
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="BookCar">
+                <input type="hidden" name="CarId" value="@carId" />
+
+                <div class="col-md-12 mb-2">
+                    <label for="BookedTime" class="form-label">BookedTime:</label>
+                    <input type="date" class="form-control" placeholder="Enter BookedTime" asp-for="BookedTime">
+                    <span asp-validation-for="BookedTime" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-12 mb-2">
+                    <label for="ReturnTime" class="form-label">End Date:</label>
+                    <input type="date" class="form-control" placeholder="Enter ReturnTime" asp-for="ReturnTime">
+                    <span asp-validation-for="ReturnTime" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Create Booking</button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>

@@ -1,10 +1,12 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using CarRentals.Models.Booking;
 using CarRentals.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentals.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         private readonly IBookingService _bookingService;

@@ -3,6 +3,7 @@ using CarRentals.Models;
 using CarRentals.Models.Booking;
 using CarRentals.Repository.Interfaces;
 using CarRentals.Services.Interfaces;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace CarRentals.Services.Implementation
@@ -103,12 +104,16 @@ namespace CarRentals.Services.Implementation
         public BookingsResponseModel GetBookings()
         {
             var response = new BookingsResponseModel();
+            var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
 
-            var bookings = _unitOfWork.Bookings.GetAllBookings(c => c.IsDeleted == false);
+            var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            Expression<Func<Booking, bool>> expression = bk => ( bk.UserId == userIdClaim && bk.IsDeleted == false);
+
+            var bookings = IsInRole ? _unitOfWork.Bookings.GetAllBookings() : _unitOfWork.Bookings.GetAllBookings(expression);
 
             if (bookings.Count == 0)
             {
-                response.Message = "No comments yet!";
+                response.Message = "No commentsb yet!";
                 return response;
             }
 

@@ -7,6 +7,7 @@ namespace CarRentals.Repository.Interface
     {
         Booking GetBooking(Expression<Func<Booking, bool>> expression);
         List<Booking> GetAllBookings(Expression<Func<Booking, bool>> expression);
+        List<Booking> GetAllBookings();
         Booking GetByReference(string reference);
     }
 }

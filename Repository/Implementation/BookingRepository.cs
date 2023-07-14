@@ -25,6 +25,11 @@ namespace CarRentals.Repository.Implementation
             var bookings = _context.Bookings.Where(expression).Include(b => b.User).Include(b => b.Car).ToList();
             return bookings;
         }
+        public List<Booking> GetAllBookings()
+        {
+            var bookings = _context.Bookings.Include(b => b.User).Include(b => b.Car).ToList();
+            return bookings;
+        }
 
 
         public Booking GetByReference(string reference)

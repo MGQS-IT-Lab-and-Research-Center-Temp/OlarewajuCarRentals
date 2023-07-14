@@ -30,7 +30,7 @@ namespace CarRentals.Controllers
             _notyf = notyf;
         }
 
-        [Authorize]
+      
         public IActionResult Index()
         {
             var cars = _carService.DisplayCars();
