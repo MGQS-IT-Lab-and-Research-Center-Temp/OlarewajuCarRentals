@@ -1,7 +1,7 @@
 ﻿@model CarRentals.Models.Car.CarViewModel
 
 <div class="card mb-4 shadow-sm">
-    <img src="@(string.IsNullOrEmpty(Model.CoverImageURL) ? "/images/noimage.png" : Model.CoverImageURL)" class="img-thumbnail" width="200" height="200"/>
+    <img src="@(string.IsNullOrEmpty(Model.CoverImageURL) ? "/images/noimage.png" : Model.CoverImageURL)" class="img-thumbnail"/>
     <div class="card-body">
         <h3 class="card-title">@(string.IsNullOrEmpty(Model.Name) ? "Name is not available" : Model.Name)</h3>
         <p class="card-text">@(string.IsNullOrEmpty(Model.PlateNumber) ? "PlateNumeber is not availabe" : Model.PlateNumber)</p>

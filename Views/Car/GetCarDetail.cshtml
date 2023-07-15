@@ -60,9 +60,13 @@
             <div class="btn-group">
                 <a asp-controller="Booking" asp-action="BookCar" asp-route-id="@Model.Id"
                    class="btn btn-sm btn-outline-secondary">Book Car</a>
-                <a asp-controller="Comment" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-success btn-sm">
-                    Add Comment
-                </a>
+                @if(User != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Comment" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-success btn-sm">
+                        Add Comment
+                    </a>
+                }
+               
             </div>
         </div>
     </div>
