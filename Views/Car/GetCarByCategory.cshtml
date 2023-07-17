@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Car List";
+    Layout = "_CarLayout";
+
 }
 
 @await Html.PartialAsync("_ListAlert", Model)
@@ -9,7 +11,6 @@
 @if (Model is not null)
 {
     <div class="container">
-        <h3 class="display-4">All cars</h3>
         <div class="row">
 
             @foreach (var car in Model)
