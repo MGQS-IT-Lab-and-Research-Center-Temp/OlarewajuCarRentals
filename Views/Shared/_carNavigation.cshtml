@@ -1,0 +1,92 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">CarRentals</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="oi oi-menu"></span> Menu
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav flex-grow-1">
+
+                @if (User != null && User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Car" asp-action="Create">Create Car  </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Role" asp-action="Index">Manage Role</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Category" asp-action="Index">Manage Category</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Car" asp-action="Index">Car List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Booking" asp-action="Index">Bookings</a>
+                        </li>
+                    }
+                    else
+                    {
+
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Car" asp-action="Index">
+                                <i class="fas fa-user"></i>
+                                My Booked Cars
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Booking" asp-action="Index">
+                                <i class="fas fa-user"></i>
+                                My Bookings
+                            </a>
+                        </li>
+
+                    }
+                }
+            </ul>
+
+            <ul class="navbar-nav justify-content-end">
+                @if (User != null && User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-success" href="#">@User.Identity.Name</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-success" asp-controller="Home" asp-action="Logout">
+                            <i class="fas fa-power-off"></i>
+                            Logout
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-success" asp-controller="Home" asp-action="Login">
+                            <i class="fas fa-user"></i>
+                            Login
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-success" asp-controller="Home" asp-action="SignUp">
+                            <i class="fas fa-user"></i>
+                            SignUp
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

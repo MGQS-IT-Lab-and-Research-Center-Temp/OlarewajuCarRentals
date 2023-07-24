@@ -1,12 +1,10 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using CarRentals.Models;
 using CarRentals.Models.Auth;
 using CarRentals.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Security.Claims;
 using CarRentals.Service.Interface;
 using CarRentals.ActionFilter;
@@ -30,7 +28,7 @@ namespace CarRentals.Controllers
             _notyf = notyf;
         }
 
-      
+
         public IActionResult Index()
         {
             var cars = _carService.DisplayCars();
@@ -122,6 +120,14 @@ namespace CarRentals.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult About()
+        {
+            return View();
+        }
+        public IActionResult Service()
         {
             return View();
         }

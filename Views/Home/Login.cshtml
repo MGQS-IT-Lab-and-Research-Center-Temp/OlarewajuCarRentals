@@ -1,10 +1,14 @@
 ﻿@model CarRentals.Models.Auth.LoginViewModel
-<title>Login</title>
-<div class="container">
-    <h4 class="display-4">Log In</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_LoginLayout";
+}
+
+<div class="row justify-content-center">
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="login-wrap p-0">
             <form method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
@@ -21,12 +25,24 @@
                 <div class="form-group">
                     <input type="submit" value="Login" class="btn btn-primary" />
                 </div>
+                <div class="form-group d-md-flex">
+                    <div class="w-50">
+                        <label class="checkbox-wrap checkbox-primary">
+                            Remember Me
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <div class="w-50 text-md-right">
+                        <a href="#" style="color: #fff">Forgot Password</a>
+                    </div>
+                </div>
             </form>
-        </div>
-        <div class="col-md-8">
-            <img class="img-fluid" src="~/images/login.png" />
+            <p class="w-100 text-center">&mdash; Or Sign In With &mdash;</p>
+            <div class="social d-flex text-center">
+                <a href="#" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-facebook mr-2"></span> Facebook</a>
+                <a href="#" class="px-2 py-2 ml-md-1 rounded"><span class="ion-logo-twitter mr-2"></span> Twitter</a>
+            </div>
         </div>
     </div>
-   <a asp-controller="Home" asp-action="SignUp"> Sign up</a>
 </div>
-
