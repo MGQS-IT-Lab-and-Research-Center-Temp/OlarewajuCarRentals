@@ -1,0 +1,31 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <title>Login 10</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/yassests/css/style.css">
+</head>
+<header>
+    <partial name="_carNavigation" />
+</header>
+<body class="img js-fullheight" style="background-image:url(@Url.Content("~/yassests/images/bg.jpg"));">
+    <section class="ftco-section ftco-no-pt bg-black">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </section>
+    <script src="~/yassests/js/jquery.min.js"></script>
+    <script src="~/yassests/js/popper.js"></script>
+    <script src="~/yassests/js/bootstrap.min.js"></script>
+    <script src="~/yassests/js/main.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    @await Component.InvokeAsync("Notyf")
+</body>
+</html>
+
