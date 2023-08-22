@@ -1,6 +1,7 @@
 ﻿using CarRentals.Context;
 using CarRentals.Entities;
 using CarRentals.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace CarRentals.Repository.Implementation
@@ -14,61 +15,69 @@ namespace CarRentals.Repository.Implementation
             _context = context;
         }
 
-        public T Create(T entity)
+
+        public async Task<T> CreateAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
+            await _context.Set<T>().AddAsync(entity);
+
             return entity;
         }
 
-        public T Get(string id)
+        public async Task<T> GetAsync(string id)
         {
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
-        public T Get(Expression<Func<T, bool>> expression)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> expression)
         {
-            return _context.Set<T>().SingleOrDefault(expression);
+            return await _context.Set<T>().SingleOrDefaultAsync(expression);
         }
 
-        public bool Exists(Expression<Func<T, bool>> expression)
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
         {
-            return _context.Set<T>().Any(expression);
+            return await _context.Set<T>().AnyAsync(expression);
         }
 
-        public void Remove(T entity)
+        public Task RemoveAsync(T entity)
         {
-            _context.Set<T>().Remove(entity);
+            _context.Entry(entity).State = EntityState.Deleted;
+            return Task.CompletedTask;
         }
 
-        public T Update(T entity)
+        public Task<T> UpdateAsync(T entity)
         {
-            _context.Set<T>().Update(entity);
-            return entity;
+            _context.Entry(entity).State = EntityState.Modified;
+
+            return Task.FromResult(entity);
         }
 
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _context.Set<T>().ToList();
+            return await _context.Set<T>().ToListAsync();
         }
 
-        public List<T> GetAll(Expression<Func<T, bool>> expression = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression = null)
         {
-            return _context.Set<T>().Where(expression).ToList();
+            return await _context.Set<T>()
+                .Where(expression)
+                .ToListAsync();
         }
 
-        public List<T> GetAllByIds(List<string> ids)
+        public async Task<List<T>> GetAllByIdsAsync(List<string> ids)
         {
-            return _context.Set<T>().Where(t => ids.Contains(t.Id)).ToList();
+            return await _context.Set<T>()
+                .Where(t => ids.Contains(t.Id))
+                .ToListAsync();
         }
 
-        public IReadOnlyList<T> SelectAll()
+        public async Task<IEnumerable<T>> SelectAll()
         {
-            return _context.Set<T>().ToList();
+            return await _context.Set<T>().ToListAsync();
         }
 
-        public IReadOnlyList<T> SelectAll(Expression<Func<T, bool>> expression = null)
+        public async Task<IEnumerable<T>> SelectAll(Expression<Func<T, bool>> expression = null)
         {
-            return _context.Set<T>().Where(expression).ToList();
+            return await _context.Set<T>().Where(expression).ToListAsync();
         }
     }
 }

@@ -11,9 +11,9 @@ namespace CarRentals.Repository.Implementation
         public BookingRepository(CarRentalsContext context) : base(context)
         {
         }
-        public Booking GetBooking(Expression<Func<Booking, bool>> expression)
+        public async Task<Booking> GetBooking(Expression<Func<Booking, bool>> expression)
         {
-            var booking = _context.Bookings
+            var booking = await  _context.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Car)
                 .SingleOrDefault(expression);

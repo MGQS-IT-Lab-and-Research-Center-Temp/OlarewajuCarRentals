@@ -47,5 +47,37 @@ namespace CarRentals.Context
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
 
-    }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateSoftDeleteStatuses();
+            this.AddAuditInfo(_httpContextAccessor);
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            UpdateSoftDeleteStatuses();
+            this.AddAuditInfo(_httpContextAccessor);
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private const string IsDeletedProperty = "IsDeleted";
+
+        private void UpdateSoftDeleteStatuses()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.CurrentValues[IsDeletedProperty] = false;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.CurrentValues[IsDeletedProperty] = true;
+                        break;
+                }
+            }
+
+        }
 }

@@ -113,7 +113,7 @@ namespace CarRentals.Services.Implementation
 
             if (bookings.Count == 0)
             {
-                response.Message = "No commentsb yet!";
+                response.Message = "No Bookings yet!";
                 return response;
             }
 
