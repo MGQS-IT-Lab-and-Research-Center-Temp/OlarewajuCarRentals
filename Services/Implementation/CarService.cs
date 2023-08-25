@@ -38,7 +38,7 @@ namespace CarRentals.Services.Implementation
             if (createcarDto.CoverPhoto != null)
             {
                 string folder = "cars/cover/";
-                createcarDto.CoverImageUrl = UploadImage(folder, createcarDto.CoverPhoto);
+                createcarDto.CoverImageUrl =  await UploadImage(folder, createcarDto.CoverPhoto);
             }
 
             if (createcarDto.GalleryFiles != null)
@@ -52,7 +52,7 @@ namespace CarRentals.Services.Implementation
                     var gallery = new CarGalleryModel()
                     {
                         Name = file.FileName,
-                        URL = UploadImage(folder, file)
+                        URL = await UploadImage(folder, file)
                     };
                     createcarDto.Gallery.Add(gallery);
                 }

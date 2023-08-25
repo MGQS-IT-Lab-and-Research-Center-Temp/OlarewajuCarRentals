@@ -3,16 +3,15 @@ using CarRentals.Models;
 using CarRentals.Models.Booking;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarRentals.Services.Interfaces
+namespace CarRentals.Services.Interfaces;
+
+public interface IBookingService
 {
-    public interface IBookingService
-    {
-        Task<BaseResponseModel> BookCar(CreateBookingViewModel model);
+    Task<BaseResponseModel> BookCar(CreateBookingViewModel model);
 
-        Task<BookingResponseModel> GetBooking(string id);
+    Task<BookingResponseModel> GetBooking(string id);
 
-        Task<BookingResponseModel> GetByReference(string reference);
+    Task<BookingResponseModel> GetByReference(string reference);
 
-        Task<BookingsResponseModel> GetBookings();
-    }
+    Task<BookingsResponseModel> GetBookings();
 }
