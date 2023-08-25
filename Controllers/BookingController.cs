@@ -17,9 +17,9 @@ namespace CarRentals.Controllers
             _bookingService = bookingService;
             _notyf = notyf;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var cars = _bookingService.GetBookings();
+            var cars = await _bookingService.GetBookings();
             ViewData["Message"] = cars.Message;
             ViewData["Status"] = cars.Status;
 
@@ -33,10 +33,10 @@ namespace CarRentals.Controllers
         }
 
         [HttpPost]
-        public IActionResult BookCar(CreateBookingViewModel model)
+        public async Task<IActionResult> BookCar(CreateBookingViewModel model)
         {
 
-            var response = _bookingService.BookCar(model);
+            var response = await _bookingService.BookCar(model);
 
             if (response.Status is false)
             {
@@ -50,9 +50,9 @@ namespace CarRentals.Controllers
         }
 
 
-        public IActionResult SuccessPage(string id)
+        public async Task<IActionResult> SuccessPage(string id)
         {
-            var booking = _bookingService.GetBooking(id);
+            var booking = await _bookingService.GetBooking(id);
             ViewData["Message"] = booking.Message;
             ViewData["Status"] = booking.Status;
 
