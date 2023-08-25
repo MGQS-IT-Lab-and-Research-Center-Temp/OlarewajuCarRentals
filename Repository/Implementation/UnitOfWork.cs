@@ -33,11 +33,11 @@ namespace CarRentals.Repository.Implementations
             Comments = commentRepository;
             Bookings = bookings;
         }
-
-        public int SaveChanges()
+        public async Task<int> SaveChangesAsync()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
+
 
         protected virtual void Dispose(bool disposing)
         {

@@ -5,8 +5,8 @@ namespace CarRentals.Repository.Interface
 {
     public interface IUserRepository : IRepository<User>
     {
-        User GetUserById(string id);
-        User GetUser(Expression<Func<User, bool>> expression);
-        List<User> GetUsers(Expression<Func<User, bool>> expression);
+        Task<User> GetUserById(string id);
+        Task<User> GetUser(Expression<Func<User, bool>> expression);
+        Task<List<User>> GetUsers(Expression<Func<User, bool>> expression);
     }
 }

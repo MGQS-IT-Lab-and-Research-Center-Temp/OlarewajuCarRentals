@@ -20,18 +20,18 @@ namespace CarRentals.Services.Implementation
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
         }
-        public BaseResponseModel BookCar(CreateBookingViewModel model)
+        public async Task<BaseResponseModel> BookCar(CreateBookingViewModel model)
         {
             var response = new BaseResponseModel();
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var LoggedInuser = _unitOfWork.Users.Get(userIdClaim);
+            var LoggedInuser = await _unitOfWork.Users.GetAsync(userIdClaim);
             if (LoggedInuser is null)
             {
                 response.Message = "User not found";
                 return response;
             }
-            var car = _unitOfWork.Cars.GetCar(c => c.Id == model.CarId);
+            var car = await _unitOfWork.Cars.GetCar(c => c.Id == model.CarId);
 
             if (car is null)
             {
@@ -40,7 +40,7 @@ namespace CarRentals.Services.Implementation
             }
 
 
-            if(car.AailabilityStaus is false)
+            if (car.AailabilityStaus is false)
             {
                 response.Message = "car is unavailable";
                 return response;
@@ -59,8 +59,8 @@ namespace CarRentals.Services.Implementation
             try
             {
                 car.AailabilityStaus = false;
-                _unitOfWork.Bookings.Create(booking);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Bookings.CreateAsync(booking);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Car  Booked successfully.";
 
@@ -73,10 +73,10 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BookingResponseModel GetBooking(string id)
+        public async Task<BaseResponseModel> GetBooking(string id)
         {
             var response = new BookingResponseModel();
-            var bookingExist = _unitOfWork.Bookings.Exists(c => c.Id == id);
+            var bookingExist = await _unitOfWork.Bookings.ExistsAsync(c => c.Id == id);
 
             if (!bookingExist)
             {
@@ -84,7 +84,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var booking = _unitOfWork.Bookings.GetBooking(bk=>bk.Id == id);
+            var booking = await _unitOfWork.Bookings.GetBooking(bk => bk.Id == id);
 
             response.Message = "Success";
             response.Status = true;
@@ -101,15 +101,15 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BookingsResponseModel GetBookings()
+        public async Task<BaseResponseModel> GetBookings()
         {
             var response = new BookingsResponseModel();
             var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
 
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            Expression<Func<Booking, bool>> expression = bk => ( bk.UserId == userIdClaim && bk.IsDeleted == false);
+            Expression<Func<Booking, bool>> expression = bk => (bk.UserId == userIdClaim && bk.IsDeleted == false);
 
-            var bookings = IsInRole ? _unitOfWork.Bookings.GetAllBookings() : _unitOfWork.Bookings.GetAllBookings(expression);
+            var bookings = IsInRole ? await _unitOfWork.Bookings.GetAllBookings() : await _unitOfWork.Bookings.GetAllBookings(expression);
 
             if (bookings.Count == 0)
             {
@@ -124,7 +124,7 @@ namespace CarRentals.Services.Implementation
                         CarId = bk.CarId,
                         UserId = bk.UserId,
                         UserName = $"{bk.User.FirstName} {bk.User.LastName}",
-                        CarName= bk.Car.Name
+                        CarName = bk.Car.Name
                     }).ToList();
 
             response.Status = true;
@@ -133,10 +133,10 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BookingResponseModel GetByReference(string reference)
+        public async Task<BaseResponseModel> GetByReference(string reference)
         {
             var response = new BookingResponseModel();
-            var bookingExist = _unitOfWork.Bookings.Exists(bk => bk.BookingReference == reference);
+            var bookingExist = await _unitOfWork.Bookings.ExistsAsync(bk => bk.BookingReference == reference);
 
             if (!bookingExist)
             {
@@ -144,7 +144,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var booking = _unitOfWork.Bookings.GetByReference(reference);
+            var booking = await _unitOfWork.Bookings.GetByReference(reference);
 
             response.Message = "Success";
             response.Status = true;
