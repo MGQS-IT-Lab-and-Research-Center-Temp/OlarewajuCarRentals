@@ -17,10 +17,10 @@ namespace CarRentals.Services.Implementation
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
         }
-        public UserResponseModel GetUser(string userId)
+        public async Task<UserResponseModel> GetUser(string userId)
         {
             var response = new UserResponseModel();
-            var user = _unitOfWork.Users.GetUser(x => x.Id == userId);
+            var user = await _unitOfWork.Users.GetUser(x => x.Id == userId);
 
             if (user is null)
             {
@@ -41,13 +41,13 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public UserResponseModel Login(LoginViewModel request)
+        public async Task<UserResponseModel> Login(LoginViewModel request)
         {
             var response = new UserResponseModel();
 
             try
             {
-                var user = _unitOfWork.Users.GetUser(x =>
+                var user = await _unitOfWork.Users.GetUser(x =>
                                 x.Email == request.Email);
 
                 if (user is null)
@@ -84,13 +84,12 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BaseResponseModel Register(SignUpViewModel request, string roleName)
+        public async Task<BaseResponseModel> Register(SignUpViewModel request, string roleName)
         {
             var response = new BaseResponseModel();
             string saltString = HashingHelper.GenerateSalt();
             string hashedPassword = HashingHelper.HashPassword(request.Password, saltString);
-            var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-            var userExist = _unitOfWork.Users.Exists(x => x.Email == request.Email);
+            var userExist = await _unitOfWork.Users.ExistsAsync(x => x.Email == request.Email);
              
             if (userExist)
             {
@@ -100,7 +99,7 @@ namespace CarRentals.Services.Implementation
 
             roleName ??= "AppUser";
 
-            var role = _unitOfWork.Roles.Get(x => x.RoleName == roleName);
+            var role = await _unitOfWork.Roles.GetAsync(x => x.RoleName == roleName);
 
             if (role is null)
             {
@@ -117,13 +116,12 @@ namespace CarRentals.Services.Implementation
                 HashSalt = saltString,
                 PasswordHash = hashedPassword,
                 RoleId = role.Id,
-                CreatedBy = createdBy,
             };
 
             try
             {
-                _unitOfWork.Users.Create(user);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Users.CreateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
                 response.Message = $"You have succesfully signed up on carrentals";
                 response.Status = true;
 

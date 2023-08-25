@@ -17,13 +17,11 @@ namespace CarRentals.Services.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public BaseResponseModel CreateRole(CreateRoleViewModel request)
+        public async Task<BaseResponseModel> CreateRole(CreateRoleViewModel request)
         {
             var response = new BaseResponseModel();
 
-            var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-
-            var roleExist = _unitOfWork.Roles.Exists(r => r.RoleName == request.RoleName);
+            var roleExist = await _unitOfWork.Roles.ExistsAsync(r => r.RoleName == request.RoleName);
 
             if (roleExist)
             {
@@ -35,13 +33,12 @@ namespace CarRentals.Services.Implementation
             {
                 RoleName = request.RoleName,
                 Description = request.Description,
-                CreatedBy = createdBy
             };
 
             try
             {
-                _unitOfWork.Roles.Create(role);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Roles.CreateAsync(role);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Role created successfully.";
 
@@ -54,11 +51,11 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BaseResponseModel DeleteRole(string roleId)
+        public async Task<BaseResponseModel> DeleteRole(string roleId)
         {
             var response = new BaseResponseModel();
-            var roleIdExist = _unitOfWork.Roles.Exists(c => c.Id == roleId);
-            var role = _unitOfWork.Roles.Get(roleId);
+            var roleIdExist = await _unitOfWork.Roles.ExistsAsync(c => c.Id == roleId);
+            var role = await _unitOfWork.Roles.GetAsync(roleId);
 
             if (!roleIdExist)
             {
@@ -76,8 +73,8 @@ namespace CarRentals.Services.Implementation
 
             try
             {
-                _unitOfWork.Roles.Update(role);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Roles.RemoveAsync(role);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Role deleted successfully.";
                 return response;
@@ -89,13 +86,13 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public RolesResponseModel GetAllRole()
+        public async Task<RolesResponseModel> GetAllRole()
         {
             var response = new RolesResponseModel();
 
             try
             {
-                var role = _unitOfWork.Roles.GetAll(r => r.IsDeleted == false);
+                var role = await _unitOfWork.Roles.GetAllAsync(r => r.IsDeleted == false);
 
                 if (role.Count == 0)
                 {
@@ -122,11 +119,11 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public RoleResponseModel GetRole(string roleId)
+        public async Task<RoleResponseModel> GetRole(string roleId)
         {
             var response = new RoleResponseModel();
 
-            var roleExist = _unitOfWork.Roles.Exists(r =>
+            var roleExist = await _unitOfWork.Roles.ExistsAsync(r =>
                                 (r.Id == roleId)
                                 && (r.Id == roleId
                                 && r.IsDeleted == false));
@@ -137,7 +134,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var role = _unitOfWork.Roles.Get(roleId);
+            var role = await _unitOfWork.Roles.GetAsync(roleId);
 
             response.Data = new RoleViewModel
             {
@@ -151,12 +148,11 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BaseResponseModel UpdateRole(string id, UpdateRoleViewModel request)
+        public async Task<BaseResponseModel> UpdateRole(string id, UpdateRoleViewModel request)
         {
             var response = new BaseResponseModel();
-            var modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
 
-            var roleIdExist = _unitOfWork.Roles.Exists(c => c.Id == id);
+            var roleIdExist = await _unitOfWork.Roles.ExistsAsync(c => c.Id == id);
 
             if (!roleIdExist)
             {
@@ -164,15 +160,13 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var role = _unitOfWork.Roles.Get(id);
+            var role = await _unitOfWork.Roles.GetAsync(id);
 
             role.Description = request.Description;
-            role.ModifiedBy = modifiedBy;
-
             try
             {
-                _unitOfWork.Roles.Update(role);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Roles.UpdateAsync(role);
+                await _unitOfWork.SaveChangesAsync();
                 response.Message = "Role updated successfully.";
                 response.Status = true;
 
