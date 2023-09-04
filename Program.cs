@@ -1,5 +1,6 @@
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
+using Carentals.MapperConfig;
 using CarRentals.Context;
 using CarRentals.Repository.Implementation;
 using CarRentals.Repository.Implementations;
@@ -19,6 +20,8 @@ namespace CarRentals
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddAutoMapper(typeof(MapConfig));
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
@@ -27,7 +30,7 @@ namespace CarRentals
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-            builder.Services.AddScoped<ICommentService, CommentService>(); 
+            builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
