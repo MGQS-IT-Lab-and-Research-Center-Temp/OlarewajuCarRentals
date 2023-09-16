@@ -93,15 +93,7 @@ public class BookingService : IBookingService
 
         response.Message = "Success";
         response.Status = true;
-        response.Data = new BookingViewModel
-        {
-            Id = booking.Id,
-            CarId = booking.CarId,
-            UserId = booking.UserId,
-            CarName = booking.Car.Name,
-            UserName = $"{booking.User.FirstName} {booking.User.LastName}",
-            BookingReference = booking.BookingReference,
-        };
+        response.Data = _mapper.Map<BookingDetailDto>(booking);
 
         return response;
     }
@@ -144,16 +136,7 @@ public class BookingService : IBookingService
 
         response.Message = "Success";
         response.Status = true;
-        response.Data = new BookingViewModel
-        {
-            Id = booking.Id,
-            CarId = booking.CarId,
-            UserId = booking.UserId,
-            CarName = booking.Car.Name,
-            UserName = $"{booking.User.FirstName} {booking.User.LastName}",
-            BookingReference = booking.BookingReference,
-        };
-
+        response.Data = _mapper.Map<BookingDetailDto>(booking);
         return response;
     }
 
