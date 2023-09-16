@@ -12,14 +12,14 @@ public class MapConfig : Profile
 {
     public MapConfig()
     {
-        //FlagDto mapping config
-        CreateMap<BookingListDto, Booking>().ReverseMap();
+        //Boooking mapping config
+        CreateMap<Booking, BookingListDto>().ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id)).ReverseMap();
         CreateMap<BookingDetailDto, Booking>().ReverseMap();
         CreateMap<BookingCreateDto, Booking>().ReverseMap();
 
 
         //Car Mapping Config
-        CreateMap<CarCreateDto, Car>().ReverseMap();
+        CreateMap<CarCreateDto, Car>().ForMember(dest => dest.CarGalleries, act).ReverseMap();
         CreateMap<CarDetailDto, Car>().ReverseMap();
         CreateMap<CarListDto, Car>().ReverseMap();
 
@@ -27,7 +27,7 @@ public class MapConfig : Profile
         CreateMap<CategoryListDto, Category>().ReverseMap();
         CreateMap<CategoryDetailDto, Category>().ReverseMap();
         CreateMap<CategoryCreateDto, Category>().ReverseMap();
-        CreateMap<CategoryUpdateDto,Category>().ReverseMap();
+        CreateMap<CategoryUpdateDto, Category>().ReverseMap();
 
         //Comment Mapping Config
         CreateMap<CommentDetailDto, Comment>().ReverseMap();

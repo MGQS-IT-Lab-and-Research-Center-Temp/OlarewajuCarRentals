@@ -1,4 +1,6 @@
-﻿using CarRentals.Entities;
+﻿using AutoMapper;
+using CarRentals.DTOs.BookingDto;
+using CarRentals.Entities;
 using CarRentals.Models;
 using CarRentals.Models.Booking;
 using CarRentals.Repository.Interfaces;
@@ -11,13 +13,16 @@ namespace CarRentals.Services.Implementation;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public BookingService(
         IUnitOfWork unitOfWork,
+        IMapper mapper,
         IHttpContextAccessor httpContextAccessor)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
     }
     public async Task<BaseResponseModel> BookCar(CreateBookingViewModel model)
@@ -116,16 +121,7 @@ public class BookingService : IBookingService
             response.Message = "No Bookings yet!";
             return response;
         }
-
-        response.Data = bookings
-                .Select(bk => new BookingViewModel
-                {
-                    Id = bk.Id,
-                    CarId = bk.CarId,
-                    UserId = bk.UserId,
-                    UserName = $"{bk.User.FirstName} {bk.User.LastName}",
-                    CarName = bk.Car.Name
-                }).ToList();
+        response.Data = _mapper.Map<List<BookingListDto>>(bookings);
 
         response.Status = true;
         response.Message = "Success";
