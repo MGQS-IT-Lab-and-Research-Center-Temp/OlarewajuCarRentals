@@ -5,6 +5,7 @@ using CarRentals.DTOs.CarDto;
 using CarRentals.DTOs.CategoryDto;
 using CarRentals.DTOs.CommentDto;
 using CarRentals.DTOs.RoleDto;
+using CarRentals.Models;
 
 namespace Carentals.MapperConfig;
 
@@ -13,13 +14,22 @@ public class MapConfig : Profile
     public MapConfig()
     {
         //Boooking mapping config
-        CreateMap<Booking, BookingListDto>().ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id)).ReverseMap();
-        CreateMap<BookingDetailDto, Booking>().ReverseMap();
+        CreateMap<BookingListDto, Booking>()
+            .ForMember(dest =>dest.Car.Name,opt=>opt.MapFrom(src=>src.CarName)) 
+            .ForMember(dest =>$"{ dest.User.FirstName} { dest.User.LastName} ",opt=>opt.MapFrom(src=>src.UserName))
+            .ReverseMap();
+        CreateMap<BookingDetailDto, Booking>()
+             .ForMember(dest => dest.Car.Name, opt => opt.MapFrom(src => src.CarName))
+            .ForMember(dest => $"{dest.User.FirstName} {dest.User.LastName} ", opt => opt.MapFrom(src => src.UserName))
+            .ReverseMap();
         CreateMap<BookingCreateDto, Booking>().ReverseMap();
 
 
         //Car Mapping Config
-        CreateMap<CarCreateDto, Car>().ForMember(dest => dest.CarGalleries, act).ReverseMap();
+        CreateMap<CarCreateDto, Car>().ForMember(dest => dest.CarGalleries, opt => opt.MapFrom(src => new CarGalleryModel()
+        {
+            
+        })).ReverseMap();
         CreateMap<CarDetailDto, Car>().ReverseMap();
         CreateMap<CarListDto, Car>().ReverseMap();
 
