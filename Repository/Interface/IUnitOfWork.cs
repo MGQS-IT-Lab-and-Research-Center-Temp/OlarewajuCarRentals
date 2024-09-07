@@ -10,5 +10,5 @@ public interface IUnitOfWork : IDisposable
     ICarRepository Cars { get; }
     ICommentRepository Comments { get; }
     IRoleRepository Roles { get; }
-    int SaveChanges();
+    Task<int> SaveChangesAsync();
 }

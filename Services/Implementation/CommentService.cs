@@ -23,12 +23,12 @@ namespace CarRentals.Services.Implementation
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public BaseResponseModel CreateComment(CreateCommentViewModel request)
+        public async Task<BaseResponseModel> CreateComment(CreateCommentViewModel request)
         {
             var response = new BaseResponseModel();
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var LoggedInuser = _unitOfWork.Users.Get(userIdClaim);
+            var LoggedInuser = await _unitOfWork.Users.GetAsync(userIdClaim);
 
 
             if (LoggedInuser is null)
@@ -37,16 +37,17 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var car = _unitOfWork.Cars.Get(request.CarId);
+            var car = await _unitOfWork.Cars.GetAsync(request.CarId);
 
             Expression<Func<User, bool>> expression = user => user.Bookings.Where(bk => bk.CarId == request.CarId).Any(bk => bk.UserId == user.Id);
-            var bookedcarusers = _unitOfWork.Users.GetUsers(expression);
+
+            var bookedcarusers = await _unitOfWork.Users.GetUsers(expression);
             if (car is null)
             {
                 response.Message = "car not found";
                 return response;
             }
-        
+
             if (string.IsNullOrWhiteSpace(request.CommentText))
             {
                 response.Message = "Comment text is required!";
@@ -69,8 +70,8 @@ namespace CarRentals.Services.Implementation
 
             try
             {
-                _unitOfWork.Comments.Create(comment);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Comments.CreateAsync(comment);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Comment  created successfully.";
 
@@ -83,13 +84,13 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BaseResponseModel DeleteComment(string commentId)
+        public async Task<BaseResponseModel> DeleteComment(string commentId)
         {
             var response = new BaseResponseModel();
-            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var commentexist = await _unitOfWork.Comments.ExistsAsync(c => c.Id == commentId);
             var IsInRole = _httpContextAccessor.HttpContext.User.IsInRole("Admin");
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var user = _unitOfWork.Users.Get(userIdClaim);
+            var user = await _unitOfWork.Users.GetAsync(userIdClaim);
 
             if (!commentexist)
             {
@@ -97,7 +98,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var comment = _unitOfWork.Comments.Get(commentId);
+            var comment = await _unitOfWork.Comments.GetAsync(commentId);
             if (comment.UserId != user.Id && !IsInRole)
             {
                 response.Message = "You can not delete this Comment!";
@@ -108,8 +109,8 @@ namespace CarRentals.Services.Implementation
 
             try
             {
-                _unitOfWork.Comments.Update(comment);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Comments.RemoveAsync(comment);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -122,11 +123,11 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CommentsResponseModel GetAllComment()
+        public async Task<CommentsResponseModel> GetAllComment()
         {
             var response = new CommentsResponseModel();
 
-            var comment = _unitOfWork.Comments.GetAllComments(c => c.IsDeleted == false);
+            var comment = await _unitOfWork.Comments.GetAllComments(c => c.IsDeleted == false);
 
             if (comment.Count == 0)
             {
@@ -150,10 +151,10 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CommentResponseModel GetComment(string commentId)
+        public async Task<CommentResponseModel> GetComment(string commentId)
         {
             var response = new CommentResponseModel();
-            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var commentexist = await _unitOfWork.Comments.ExistsAsync(c => c.Id == commentId);
 
             if (!commentexist)
             {
@@ -161,7 +162,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var comment = _unitOfWork.Comments.GetComment(commentId);
+            var comment = await _unitOfWork.Comments.GetComment(commentId);
 
             response.Message = "Success";
             response.Status = true;
@@ -177,21 +178,20 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BaseResponseModel UpdateComment(string commentId, UpdateCommentViewModel request)
+        public async Task<BaseResponseModel> UpdateComment(string commentId, UpdateCommentViewModel request)
         {
 
             var response = new BaseResponseModel();
-            var modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-            var commentexist = _unitOfWork.Comments.Exists(c => c.Id == commentId);
+            var commentexist = await _unitOfWork.Comments.ExistsAsync(c => c.Id == commentId);
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var user = _unitOfWork.Users.Get(userIdClaim);
+            var user = await _unitOfWork.Users.GetAsync(userIdClaim);
 
             if (!commentexist)
             {
                 response.Message = "Comment  does not exist.";
                 return response;
             }
-            var comment = _unitOfWork.Comments.Get(commentId);
+            var comment = await _unitOfWork.Comments.GetAsync(commentId);
 
             if (comment.UserId != userIdClaim)
             {
@@ -200,12 +200,11 @@ namespace CarRentals.Services.Implementation
             }
 
             comment.CommentText = request.CommentText;
-            comment.ModifiedBy = modifiedBy;
 
             try
             {
-                _unitOfWork.Comments.Update(comment);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Comments.UpdateAsync(comment);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
             {

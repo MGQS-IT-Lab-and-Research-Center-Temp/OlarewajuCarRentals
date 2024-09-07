@@ -5,8 +5,8 @@ namespace CarRentals.Repository.Interface
 {
     public interface ICommentRepository :IRepository<Comment>
     {
-        Comment GetComment(string id);
-        Comment GetComment(Expression<Func<Comment, bool>> expression);
-        List<Comment> GetAllComments(Expression<Func<Comment, bool>> expression);
+        Task<Comment> GetComment(string id);
+        Task<Comment> GetComment(Expression<Func<Comment, bool>> expression);
+       Task<List<Comment>> GetAllComments(Expression<Func<Comment, bool>> expression);
     }
 }

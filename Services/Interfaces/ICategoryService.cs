@@ -7,11 +7,11 @@ namespace CarRentals.Services.Interfaces
     public interface ICategoryService
     {
 
-        BaseResponseModel CreateCategory(CreateCategoryViewModel createCategoryDto);
-        BaseResponseModel DeleteCategory(string categoryId);
-        BaseResponseModel UpdateCategory(string categoryId, UpdateCategoryViewModel updateCategoryDto);
-        CategoryResponseModel GetCategory(string categoryId);
-        CategoriesResponseModel GetAllCategory();
-        IEnumerable<SelectListItem> SelectCategories();
+        Task<BaseResponseModel> CreateCategory(CreateCategoryViewModel createCategoryDto);
+        Task<BaseResponseModel> DeleteCategory(string categoryId);
+        Task<BaseResponseModel> UpdateCategory(string categoryId, UpdateCategoryViewModel updateCategoryDto);
+        Task<CategoryResponseModel> GetCategory(string categoryId);
+        Task<CategoriesResponseModel> GetAllCategory();
+        Task<IEnumerable<SelectListItem>> SelectCategories();
     }
 }

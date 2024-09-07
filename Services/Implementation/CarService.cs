@@ -23,13 +23,13 @@ namespace CarRentals.Services.Implementation
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
         }
-        public BaseResponseModel Create(CreateCarViewModel createcarDto)
+        public async Task<BaseResponseModel> Create(CreateCarViewModel createcarDto)
         {
             var response = new BaseResponseModel();
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
             var userIdClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var platenumexist = _unitOfWork.Cars.Exists(c => c.PlateNumber == createcarDto.PlateNumber);
+            var platenumexist = await _unitOfWork.Cars.ExistsAsync(c => c.PlateNumber == createcarDto.PlateNumber);
             if (platenumexist)
             {
                 response.Message = "PlateNumber already exist already";
@@ -38,7 +38,7 @@ namespace CarRentals.Services.Implementation
             if (createcarDto.CoverPhoto != null)
             {
                 string folder = "cars/cover/";
-                createcarDto.CoverImageUrl = UploadImage(folder, createcarDto.CoverPhoto);
+                createcarDto.CoverImageUrl =  await UploadImage(folder, createcarDto.CoverPhoto);
             }
 
             if (createcarDto.GalleryFiles != null)
@@ -52,7 +52,7 @@ namespace CarRentals.Services.Implementation
                     var gallery = new CarGalleryModel()
                     {
                         Name = file.FileName,
-                        URL = UploadImage(folder, file)
+                        URL = await UploadImage(folder, file)
                     };
                     createcarDto.Gallery.Add(gallery);
                 }
@@ -76,7 +76,7 @@ namespace CarRentals.Services.Implementation
                     URL = file.URL
                 });
             }
-            var categories = _unitOfWork.Categories.GetAllByIds(createcarDto.CategoryIds);
+            var categories = await  _unitOfWork.Categories.GetAllByIdsAsync(createcarDto.CategoryIds);
 
             var carCategories = new HashSet<CarCategory>();
 
@@ -98,8 +98,8 @@ namespace CarRentals.Services.Implementation
 
             try
             {
-                _unitOfWork.Cars.Create(newcar);
-                _unitOfWork.SaveChanges();
+               await  _unitOfWork.Cars.CreateAsync(newcar);
+               await  _unitOfWork.SaveChangesAsync();
                 response.Message = "Car created successfully!";
                 response.Status = true;
 
@@ -112,7 +112,7 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BaseResponseModel Delete(string carId)
+        public async Task<BaseResponseModel> Delete(string carId)
         {
             var response = new BaseResponseModel();
 
@@ -121,7 +121,7 @@ namespace CarRentals.Services.Implementation
                                         && q.IsDeleted == false
                                         ));
 
-            var carExist = _unitOfWork.Cars.Exists(expression);
+            var carExist = await _unitOfWork.Cars.ExistsAsync(expression);
 
             if (!carExist)
             {
@@ -130,14 +130,14 @@ namespace CarRentals.Services.Implementation
             }
 
 
-            var car = _unitOfWork.Cars.Get(carId);
+            var car = await _unitOfWork.Cars.GetAsync(carId);
 
             car.IsDeleted = true;
 
             try
             {
-                _unitOfWork.Cars.Update(car);
-                _unitOfWork.SaveChanges();
+               await  _unitOfWork.Cars.RemoveAsync(car);
+               await _unitOfWork.SaveChangesAsync();
                 response.Message = "Car deleted successfully!";
                 response.Status = true;
 
@@ -150,7 +150,7 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public CarsResponseModel GetAllCar()
+        public async Task<CarsResponseModel> GetAllCar()
         {
             var response = new CarsResponseModel();
 
@@ -161,7 +161,7 @@ namespace CarRentals.Services.Implementation
 
                 Expression<Func<Car, bool>> expression = car => car.Bookings.Where(bk => bk.UserId == userIdClaim).Any(bk => bk.CarId == car.Id && car.IsDeleted == false);
 
-                var cars = IsInRole ? _unitOfWork.Cars.GetCars() : _unitOfWork.Cars.GetCars(expression);
+                var cars = IsInRole ? await _unitOfWork.Cars.GetCars() :await _unitOfWork.Cars.GetCars(expression);
 
                 if (cars.Count == 0)
                 {
@@ -191,14 +191,14 @@ namespace CarRentals.Services.Implementation
 
             return response;
         }
-        public CarsResponseModel DisplayCars()
+        public async Task< CarsResponseModel> DisplayCars()
         {
             var response = new CarsResponseModel();
 
             try
             {
 
-                var cars = _unitOfWork.Cars.GetCars(q => q.IsDeleted == false);
+                var cars =  await _unitOfWork.Cars.GetCars(q => q.IsDeleted == false);
 
                 if (cars.Count == 0)
                 {
@@ -229,21 +229,18 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CarResponseModel GetCar(string carId)
+        public async Task<CarResponseModel> GetCar(string carId)
         {
             var response = new CarResponseModel();
-            var carExist = _unitOfWork.Cars.Exists(q => q.Id == carId && q.IsDeleted == false);
-           
-            var car = new Car();
-
+            var carExist = await  _unitOfWork.Cars.ExistsAsync(q => q.Id == carId && q.IsDeleted == false);
+       
             if (!carExist)
             {
                 response.Message = $"car with id {carId} does not exist!";
                 return response;
             }
 
-            car = _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted );
-
+            var car = await _unitOfWork.Cars.GetCar(c => c.Id == carId && !c.IsDeleted);
 
             if (car is null)
             {
@@ -280,13 +277,13 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CarsResponseModel GetCarByCategoryId(string categoryId)
+        public async Task<CarsResponseModel> GetCarByCategoryId(string categoryId)
         {
             var response = new CarsResponseModel();
 
             try
             {
-                var cars = _unitOfWork.Cars.GetCarByCategoryId(categoryId);
+                var cars = await _unitOfWork.Cars.GetCarByCategoryId(categoryId);
 
                 if (cars.Count == 0)
                 {
@@ -317,14 +314,14 @@ namespace CarRentals.Services.Implementation
         }
 
       
-        private string UploadImage(string folderPath, IFormFile file)
+        private async Task<string> UploadImage(string folderPath, IFormFile file)
         {
 
             folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
 
             string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
 
-            file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
+           await  file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
 
             return "/" + folderPath;
         }

@@ -29,9 +29,9 @@ namespace CarRentals.Controllers
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var cars = _carService.DisplayCars();
+            var cars = await _carService.DisplayCars();
             ViewData["Message"] = cars.Message;
             ViewData["Status"] = cars.Status;
 
@@ -44,9 +44,9 @@ namespace CarRentals.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignUp(SignUpViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
-            var response = _userService.Register(model);
+            var response = await _userService.Register(model);
 
             if (response.Status is false)
             {
@@ -67,9 +67,9 @@ namespace CarRentals.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var response = _userService.Login(model);
+            var response = await _userService.Login(model);
             var user = response.Data;
 
             if (response.Status == false)
@@ -94,7 +94,7 @@ namespace CarRentals.Controllers
 
             var principal = new ClaimsPrincipal(claimsIdentity);
 
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
 
             _notyf.Success(response.Message);
 

@@ -5,9 +5,9 @@ namespace CarRentals.Repository.Interface
 {
     public interface IBookingRepository : IRepository<Booking>
     {
-        Booking GetBooking(Expression<Func<Booking, bool>> expression);
-        List<Booking> GetAllBookings(Expression<Func<Booking, bool>> expression);
-        List<Booking> GetAllBookings();
-        Booking GetByReference(string reference);
+       Task<Booking> GetBooking(Expression<Func<Booking, bool>> expression);
+        Task<List<Booking>> GetAllBookings(Expression<Func<Booking, bool>> expression);
+        Task<List<Booking>> GetAllBookings();
+        Task<Booking> GetByReference(string reference);
     }
 }

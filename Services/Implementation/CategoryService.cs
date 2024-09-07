@@ -22,15 +22,16 @@ namespace CarRentals.Services.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public BaseResponseModel CreateCategory(CreateCategoryViewModel request)
+        public async Task<BaseResponseModel> CreateCategory(CreateCategoryViewModel request)
         {
             var response = new BaseResponseModel();
             var createdBy = _httpContextAccessor.HttpContext.User.Identity.Name;
 
-            var isCategoryExist = _unitOfWork.Categories.Exists(c => c.Name == request.Name);
+            var isCategoryExist = await _unitOfWork.Categories.ExistsAsync(c => c.Name == request.Name);
 
             if (isCategoryExist)
             {
+
                 response.Message = "Category already exist!";
                 return response;
             }
@@ -50,8 +51,8 @@ namespace CarRentals.Services.Implementation
 
             try
             {
-                _unitOfWork.Categories.Create(category);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Categories.CreateAsync(category);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Category created successfully.";
 
@@ -64,10 +65,10 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public BaseResponseModel DeleteCategory(string categoryId)
+        public async Task<BaseResponseModel> DeleteCategory(string categoryId)
         {
             var response = new BaseResponseModel();
-            var isCategoryExist = _unitOfWork.Categories.Exists(c => c.Id == categoryId && !c.IsDeleted);
+            var isCategoryExist = await _unitOfWork.Categories.ExistsAsync(c => c.Id == categoryId && !c.IsDeleted);
 
             if (!isCategoryExist)
             {
@@ -75,13 +76,13 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var category = _unitOfWork.Categories.Get(categoryId);
+            var category = await _unitOfWork.Categories.GetAsync(categoryId);
             category.IsDeleted = true;
 
             try
             {
-                _unitOfWork.Categories.Update(category);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Categories.RemoveAsync(category);
+                await _unitOfWork.SaveChangesAsync();
                 response.Status = true;
                 response.Message = "Category successfully deleted.";
 
@@ -94,14 +95,14 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public CategoriesResponseModel GetAllCategory()
+        public async Task<CategoriesResponseModel> GetAllCategory()
         {
             var response = new CategoriesResponseModel();
 
             try
             {
                 Expression<Func<Category, bool>> expression = c => c.IsDeleted == false;
-                var category = _unitOfWork.Categories.GetAll(expression);
+                var category = await _unitOfWork.Categories.GetAllAsync(expression);
 
                 if (category is null || category.Count == 0)
                 {
@@ -129,7 +130,7 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public CategoryResponseModel GetCategory(string categoryId)
+        public async Task<CategoryResponseModel> GetCategory(string categoryId)
         {
             var response = new CategoryResponseModel();
 
@@ -138,7 +139,7 @@ namespace CarRentals.Services.Implementation
                                                 && (c.Id == categoryId
                                                 && c.IsDeleted == false);
 
-            var categoryExist = _unitOfWork.Categories.Exists(expression);
+            var categoryExist = await _unitOfWork.Categories.ExistsAsync(expression);
 
             if (!categoryExist)
             {
@@ -146,7 +147,7 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var category = _unitOfWork.Categories.Get(categoryId);
+            var category = await _unitOfWork.Categories.GetAsync(categoryId);
 
             response.Message = "Success";
             response.Status = true;
@@ -160,11 +161,11 @@ namespace CarRentals.Services.Implementation
             return response;
         }
 
-        public BaseResponseModel UpdateCategory(string categoryId, UpdateCategoryViewModel request)
+        public async Task<BaseResponseModel> UpdateCategory(string categoryId, UpdateCategoryViewModel request)
         {
             var response = new BaseResponseModel();
             string modifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
-            var categoryExist = _unitOfWork.Categories.Exists(c => c.Id == categoryId);
+            var categoryExist = await _unitOfWork.Categories.ExistsAsync(c => c.Id == categoryId);
 
             if (!categoryExist)
             {
@@ -172,14 +173,14 @@ namespace CarRentals.Services.Implementation
                 return response;
             }
 
-            var category = _unitOfWork.Categories.Get(categoryId);
+            var category = await _unitOfWork.Categories.GetAsync(categoryId);
             category.Description = request.Description;
             category.ModifiedBy = modifiedBy;
 
             try
             {
-                _unitOfWork.Categories.Update(category);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.Categories.UpdateAsync(category);
+                await _unitOfWork.SaveChangesAsync();
                 response.Message = "Category updated successfully.";
 
                 return response;
@@ -191,9 +192,11 @@ namespace CarRentals.Services.Implementation
             }
         }
 
-        public IEnumerable<SelectListItem> SelectCategories()
+        public async Task<IEnumerable<SelectListItem>> SelectCategories()
         {
-            return _unitOfWork.Categories.SelectAll().Select(cat => new SelectListItem()
+            var categories = await _unitOfWork.Categories.SelectAll();
+
+            return categories.Select(cat => new SelectListItem()
             {
                 Text = cat.Name,
                 Value = cat.Id

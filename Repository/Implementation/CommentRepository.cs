@@ -13,34 +13,34 @@ namespace CarRentals.Repository.Implementation
 
         }
 
-        public List<Comment> GetAllComments(Expression<Func<Comment, bool>> expression)
+        public async Task<List<Comment>> GetAllComments(Expression<Func<Comment, bool>> expression)
         {
-            var comments = _context.Comments
+            var comments = await _context.Comments
                 .Include(c => c.User)
                 .Include(c => c.Car)
                 .Where(expression)
-                .ToList();
+                .ToListAsync();
             return comments;
         }
 
-        public Comment GetComment(string id)
+        public async Task<Comment> GetComment(string id)
         {
-            var comments = _context.Comments
+            var comments = await _context.Comments
                               .Include(c => c.User)
                               .Include(c => c.Car)
                               .Where(c => c.Id.Equals(id))
-                              .FirstOrDefault();
+                              .FirstOrDefaultAsync();
 
             return comments;
         }
 
-        public Comment GetComment(Expression<Func<Comment, bool>> expression)
+        public async Task<Comment> GetComment(Expression<Func<Comment, bool>> expression)
         {
-            var comments = _context.Comments
+            var comments = await _context.Comments
                           .Where(expression)
                           .Include(u => u.User)
                           .Include(c => c.Car)
-                          .FirstOrDefault();
+                          .FirstOrDefaultAsync();
 
             return comments;
         }

@@ -1,15 +1,14 @@
 using CarRentals.Models;
 using CarRentals.Models.Car;
 
-namespace CarRentals.Service.Interface
+namespace CarRentals.Service.Interface;
+
+public interface ICarService
 {
-    public interface ICarService
-    {
-        CarsResponseModel DisplayCars();
-        BaseResponseModel Create(CreateCarViewModel createcarDto);
-        BaseResponseModel Delete(string carId);
-        CarResponseModel GetCar(string carId);
-        CarsResponseModel GetCarByCategoryId(string categoryId);
-        CarsResponseModel GetAllCar();
-    }
+    Task<CarsResponseModel> DisplayCars();
+    Task<BaseResponseModel> Create(CreateCarViewModel createcarDto);
+    Task<BaseResponseModel> Delete(string carId);
+    Task<CarResponseModel> GetCar(string carId);
+    Task<CarsResponseModel> GetCarByCategoryId(string categoryId);
+    Task<CarsResponseModel> GetAllCar();
 }

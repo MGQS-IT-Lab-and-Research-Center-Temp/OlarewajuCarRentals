@@ -36,18 +36,18 @@ namespace CarRentals.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var cars = _carService.GetAllCar();
+            var cars = await _carService.GetAllCar();
             ViewData["Message"] = cars.Message;
             ViewData["Status"] = cars.Status;
 
             return View(cars.Data);
         }
-        [Authorize(Roles ="Admin")]
-        public IActionResult Create()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Categories = _categoryService.SelectCategories();
+            ViewBag.Categories = await _categoryService.SelectCategories();
             ViewData["Message"] = "";
             ViewData["Status"] = false;
 
@@ -55,10 +55,10 @@ namespace CarRentals.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateCarViewModel request)
+        public async Task<IActionResult> Create(CreateCarViewModel request)
         {
-          
-            var response = _carService.Create(request);
+
+            var response = await _carService.Create(request);
 
             if (response.Status is false)
             {
@@ -72,30 +72,30 @@ namespace CarRentals.Controllers
         }
 
 
-        public IActionResult GetCarByCategory(string id)
+        public async Task<IActionResult> GetCarByCategory(string id)
         {
-            var response = _carService.GetCarByCategoryId(id);
+            var response = await _carService.GetCarByCategoryId(id);
             ViewData["Message"] = response.Message;
             ViewData["Status"] = response.Status;
 
             return View(response.Data);
         }
         [AllowAnonymous]
-        public IActionResult GetCarDetail(string id)
+        public async Task<IActionResult> GetCarDetail(string id)
         {
-            var response = _carService.GetCar(id);
+            var response = await _carService.GetCar(id);
             ViewData["Message"] = response.Message;
             ViewData["Status"] = response.Status;
 
             return View(response.Data);
         }
 
-      
+
 
         [HttpPost]
-        public IActionResult DeleteCar([FromRoute] string id)
+        public async Task<IActionResult> DeleteCar([FromRoute] string id)
         {
-            var response = _carService.Delete(id);
+            var response = await _carService.Delete(id);
 
             if (response.Status is false)
             {
@@ -107,7 +107,7 @@ namespace CarRentals.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-       
+
 
     }
 }

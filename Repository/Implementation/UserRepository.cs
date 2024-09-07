@@ -13,33 +13,33 @@ namespace CarRentals.Repository.Implementation
         {
         }
 
-        public User GetUserById(string id)
+        public async Task<User> GetUserById(string id)
         {
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.Bookings)
                 .ThenInclude(bk => bk.Car)
                 .ThenInclude(c => c.Comments)
-                .SingleOrDefault(u => u.Id == id);
+                .SingleOrDefaultAsync(u => u.Id == id);
             return user;
         }
-        public User GetUser(Expression<Func<User, bool>> expression)
+        public async Task<User> GetUser(Expression<Func<User, bool>> expression)
         {
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.Bookings)
                 .ThenInclude(bk => bk.Car)
                 .ThenInclude(c => c.Comments)
                 .Include(c=>c.Role)
-                .SingleOrDefault(expression);
+                .SingleOrDefaultAsync(expression);
             return user;
         }
-        public List<User> GetUsers(Expression<Func<User, bool>> expression)
+        public async Task<List<User>> GetUsers(Expression<Func<User, bool>> expression)
         {
-            var users = _context.Users
+            var users = await _context.Users
                 .Include(u => u.Bookings)
                 .ThenInclude(bk => bk.Car)
                 .ThenInclude(c => c.Comments)
                 .Where(expression)
-                .ToList();
+                .ToListAsync();
             return users;
         }
     }
